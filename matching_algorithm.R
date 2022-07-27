@@ -181,12 +181,9 @@ matching_programm <- function()
     Kurzuebersicht[k,c(1:length(auswahl_incoming))] = tabelle_incoming[k,auswahl_incoming]
     Kurzuebersicht[k,c((length(auswahl_incoming)+1):(length(auswahl_incoming)+length(auswahl_tuebingen)))]=tabelle_tuebingen[buddy_matching[k],auswahl_tuebingen]
   }
-  
-  #write.csv2(Kurzuebersicht, file = '/Users/lisaadams/Documents/_Studium/Buddy Programm/Kurzuebersicht_Studienfach_Land_oA.csv')
-  write.csv2(Kurzuebersicht, file = '/Users/toni/Desktop/Buddy_Matching_Software/Finalmatch_kurz.csv')
  
   #diese Tabelle wird nun als .csv Datei exportiert, und unter dem bei "file" angegebenen Dateipfad gespeichert
-  #write.csv2(ausfuehrliche_uebersicht, file = '/Users/lisaadams/Documents/_Studium/Buddy Programm/ausfuehrliche_uebersicht_Studienfach_Land_oA.csv')
+  write.csv2(Kurzuebersicht, file = '/Users/toni/Desktop/Buddy_Matching_Software/Finalmatch_kurz.csv')
   write.csv2(ausfuehrliche_uebersicht, file = '/Users/toni/Desktop/Buddy_Matching_Software/Finalmatch_ausfuehrlich.csv')
   
   
@@ -293,20 +290,20 @@ punkte_algorithmus <- function(incoming, tuebingen){#header wird mit uebergeben
   Spalte_Datum_Incoming = c(20)
   
   
-  # Definition der Gewichtungsvariablen: wie viele Punkte gibt welche uebereinstimmung
+  # Definition der Gewichtungsvariablen: wie viele Punkte gibt welche uebereinstimmung #Default
   
-  Studienfach_Gewichtung = c(20) #Punktzahl fuer dasselbe Studienfach #20
-  Fachbereich_Gewichtung = c(15) #Punktzahl fuer denselben Fachbereich #15
-  Fakultaet_Gewichtung = c(10) #Punktzahl fuer diesselbe Fakultaet
-  BergTal_Gewichtung = c(5) #Punktzahl wenn beide am Berg oder im Tal studieren
+  Studienfach_Gewichtung = c(10) #Punktzahl fuer dasselbe Studienfach #20
+  Fachbereich_Gewichtung = c(8) #Punktzahl fuer denselben Fachbereich #15
+  Fakultaet_Gewichtung = c(5) #Punktzahl fuer diesselbe Fakultaet #10
+  BergTal_Gewichtung = c(1) #Punktzahl wenn beide am Berg oder im Tal studieren #5
   
   Hobby_Gewichtung = c(5) #Punktzahl fuer das genau gleiche Hobby #5
   Hobbykategorie_Gewichtung = c(2) #Hobby aus selber Kategorie (z.Bsp. Sport (nicht:Other))
   
-  genaues_Alter_Gewichtung = c(5) # Punktzahl fuer genaue Altersuebereinstimmung
-  ungefaehres_Alter_Gewichtung = c(3) #Punktzahl fuer bis zu 3 Jahre Altersunterschied
+  genaues_Alter_Gewichtung = c(8) # Punktzahl fuer genaue Altersuebereinstimmung #8
+  ungefaehres_Alter_Gewichtung = c(6) #Punktzahl fuer bis zu 3 Jahre Altersunterschied #3
   
-  Geschlecht_Gewichtung = c(3) #Punktzahl fuer dasselbe Geschlecht
+  Geschlecht_Gewichtung = c(5) #Punktzahl fuer dasselbe Geschlecht
   
   #beim Studienabschluss soll nur gewichtet werden, falls beide Doktoranden sind
   StudienabschlussPhD_Gewichtung = c(30) #Punktzahl falls beide Doktoranden sind
@@ -316,9 +313,9 @@ punkte_algorithmus <- function(incoming, tuebingen){#header wird mit uebergeben
   
   Land_Studiengang_Gewichtung = c(10) # Punktzahl wenn Incoming aus Land, das mit Studiengang des Tuebingers zu tun hat, bspw. Korea-Koreanistik
   
-  Sprache_Gewichtung = c(5) #Punktzahl fuer uebereinstimmende Sprache 
+  Sprache_Gewichtung = c(15) #Punktzahl fuer uebereinstimmende Sprache #5 
   
-  Ankunftsdatum_0Wochen_Gewichtung = c(10) #Punktzahl falls der Tuebinger vor oder mit dem Incoming ankommt
+  Ankunftsdatum_0Wochen_Gewichtung = c(10) #Punktzahl falls der Tuebinger vor oder mit dem Incoming ankommt #20
   Ankunftsdatum_2Wochen_Gewichtung = c(6) #Punktzahl falls der Tuebinger bis zu 2 Wochen nach dem Incoming ankommt
   Ankunftsdatum_3Wochen_Gewichtung = c(3) #Punktzahl falls der Tuebinger bis zu 3 Wochen nach dem Incoming ankommt
   
@@ -589,10 +586,12 @@ if((studienfach_tue == "Lateinamerikastudien // Latin American Studies") &
   alter_unterschied = abs(tuebingen[Spalte_Alter_Tuebingen]-incoming[Spalte_Alter_Incoming]) #berechne Altersunterschied
   if(alter_unterschied == 0){ #falls kein Altersunterschied, vergib Punkte fuer selbes Alter
     score <- score + genaues_Alter_Gewichtung
-  } else
-    if(alter_unterschied <= 3) { #falls Altersunterschied bis zu 3 Jahren, vergib Punkte fuer aehnliches Alter
+  } else if(alter_unterschied <= 3) { #falls Altersunterschied bis zu 3 Jahren, vergib Punkte fuer aehnliches Alter
       score <- score + ungefaehres_Alter_Gewichtung
-    }
+  } else if (alter_unterschied >= 7) { #falls Altersunterschied groeßer gleich 7 Jahren, ziehe Punkte ab
+    score <- score - ungefaehres_Alter_Gewichtung - genaues_Alter_Gewichtung
+  }
+
 
   #------------------------------------------------------------------------------
   # GESCHLECHT
@@ -1024,5 +1023,3 @@ zweites_fach <- function(fach){
     return(sep="\n")
   }
 }
-
-matching_programm()
