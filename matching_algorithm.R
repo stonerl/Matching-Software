@@ -14,12 +14,33 @@ library(matchingR)
 # Funktion matching_programm fuehrt matching auf Datei mit Buddy Daten aus
 # Variable "input_incoming" gibt dabei den Dateipfad zu der Tabelle mit den Informationen der Austauschstudenten an,
 # Variable "input_tuebingen" gibt den Dateipfad zu der Tabelle mit den Informationen der Tuebinger Studenten
-matching_programm <- function()
+matching_programm <- function(file_incoming, file_tuebinger, dir_output_files)
 {
-  # liest die beiden uebergebenen Tabellen ein
-  tabelle_incoming <- read.csv(file = '/Users/toni/Desktop/Buddy_Matching_Software/incoming_2022.csv', header=T, sep=";", na.strings = c("","NA"))
-  tabelle_tuebingen <- read.csv(file = '/Users/toni/Desktop/Buddy_Matching_Software/tuebinger_2022.csv', header=T, sep=";", na.strings = c("","NA"))
+  # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
+  if (missingArg(dir_output_files)) {
+    dir_output <- getwd()
+  } else {
+    dir_output <- dir_output_files
+    
+    if (!(dir.exists(dir_output))) {
+      dir.create(dir_output, recursive = TRUE)
+    }
+  }
+
+  file_kurzuebersicht   <- "Finalmatch_kurz.csv"
+  file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
+
+  if (!(file.exists(file_kurzuebersicht))) {
+    file.create(file_kurzuebersicht)
+  }
   
+  if (!(file.exists(file_gesamtuebersicht))) {
+    file.create(file_gesamtuebersicht)
+  }
+  
+  # liest die beiden uebergebenen Tabellen ein
+  tabelle_incoming <- read.csv(file = file_incoming, header=T, sep=";", na.strings = c("","NA"))
+  tabelle_tuebingen <- read.csv(file = file_tuebinger, header=T, sep=";", na.strings = c("","NA"))
   
   # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
   Spalte_2_Buddys = c(18)
@@ -182,9 +203,9 @@ matching_programm <- function()
     Kurzuebersicht[k,c((length(auswahl_incoming)+1):(length(auswahl_incoming)+length(auswahl_tuebingen)))]=tabelle_tuebingen[buddy_matching[k],auswahl_tuebingen]
   }
  
-  #diese Tabelle wird nun als .csv Datei exportiert, und unter dem bei "file" angegebenen Dateipfad gespeichert
-  write.csv2(Kurzuebersicht, file = '/Users/toni/Desktop/Buddy_Matching_Software/Finalmatch_kurz.csv')
-  write.csv2(ausfuehrliche_uebersicht, file = '/Users/toni/Desktop/Buddy_Matching_Software/Finalmatch_ausfuehrlich.csv')
+  #diese Tabelle wird nun als .csv Datei exportiert
+  write.csv2(Kurzuebersicht, file.path(dir_output,file_kurzuebersicht))
+  write.csv2(ausfuehrliche_uebersicht, file.path(dir_output,file_gesamtuebersicht))
   
   
   #nicht gematchte Incomings
