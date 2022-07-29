@@ -6,6 +6,7 @@
 # Dieser wird vom R Paket "matchingR", Copyright Jan Tilly und Nick Janetos, zur Verfuegung gestellt.
 
 library(matchingR)
+library(stringi)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
 # FUNKTION MATCHING_PROGRAMM
@@ -14,19 +15,8 @@ library(matchingR)
 # Funktion matching_programm fuehrt matching auf Datei mit Buddy Daten aus
 # Variable "input_incoming" gibt dabei den Dateipfad zu der Tabelle mit den Informationen der Austauschstudenten an,
 # Variable "input_tuebingen" gibt den Dateipfad zu der Tabelle mit den Informationen der Tuebinger Studenten
-matching_programm <- function(file_incoming, file_tuebinger, dir_output_files)
+matching_programm <- function(file_incoming, file_tuebinger, dir_output_files, web_app)
 {
-  # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
-  if (missingArg(dir_output_files)) {
-    dir_output <- getwd()
-  } else {
-    dir_output <- dir_output_files
-    
-    if (!(dir.exists(dir_output))) {
-      dir.create(dir_output, recursive = TRUE)
-    }
-  }
-
   file_kurzuebersicht   <- "Finalmatch_kurz.csv"
   file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
 
@@ -37,7 +27,18 @@ matching_programm <- function(file_incoming, file_tuebinger, dir_output_files)
   if (!(file.exists(file_gesamtuebersicht))) {
     file.create(file_gesamtuebersicht)
   }
-  
+
+  # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
+  if (missingArg(dir_output_files)) {
+    dir_output <- getwd()
+  } else {
+    if (!(stri_sub(dir_output_files,-1) == "/")){
+      dir_output <- paste(dir_output_files, "/", sep = "")
+    } else {
+      dir_output <- dir_output_files
+    }
+  }
+
   # liest die beiden uebergebenen Tabellen ein
   tabelle_incoming <- read.csv(file = file_incoming, header=T, sep=";", na.strings = c("","NA"))
   tabelle_tuebingen <- read.csv(file = file_tuebinger, header=T, sep=";", na.strings = c("","NA"))
@@ -184,7 +185,7 @@ matching_programm <- function(file_incoming, file_tuebinger, dir_output_files)
    ausfuehrliche_uebersicht[k,c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
    ausfuehrliche_uebersicht[k,c((ncol(tabelle_incoming)+1):N)]=tabelle_tuebingen[buddy_matching[k,1],]
   }
-  
+
   
   # KURZueBERSICHT
   
@@ -202,10 +203,27 @@ matching_programm <- function(file_incoming, file_tuebinger, dir_output_files)
     Kurzuebersicht[k,c(1:length(auswahl_incoming))] = tabelle_incoming[k,auswahl_incoming]
     Kurzuebersicht[k,c((length(auswahl_incoming)+1):(length(auswahl_incoming)+length(auswahl_tuebingen)))]=tabelle_tuebingen[buddy_matching[k],auswahl_tuebingen]
   }
- 
+  
   #diese Tabelle wird nun als .csv Datei exportiert
   write.csv2(Kurzuebersicht, file.path(dir_output,file_kurzuebersicht))
   write.csv2(ausfuehrliche_uebersicht, file.path(dir_output,file_gesamtuebersicht))
+  
+  # WEBueBERSICHT
+  
+  # Wir erstellen nun eine uebersicht fuer die Ausgabe im UI, die erst ausgewaehlte Daten des Incomings und dann des Tuebinger Buddys enthaelt
+  # Welche Spalten enthalten sein sollen, wird in den nachfolgenden Vektoren festgelegt
+  web_auswahl_incoming = c(Spalte_Nachname_Incoming, Spalte_Alter_Incoming, Spalte_Studienabschluss_Incoming, Spalte_Uni_Incoming, Spalte_Datum_Incoming)
+  web_auswahl_tuebingen = c(Spalte_Nachname_Tuebingen, Spalte_Alter_Tuebingen, Spalte_Studienabschluss_Tuebingen, Spalte_Uni_Tuebingen, Spalte_Datum_Tuebingen)
+  
+  if (web_app){
+    webuebersicht <- data.frame(list(tabelle_incoming[1,web_auswahl_incoming],tabelle_tuebingen[buddy_matching[1],web_auswahl_tuebingen]))
+    for(k in 2:nrow(buddy_matching)){
+      webuebersicht[k,c(1:length(web_auswahl_incoming))] = tabelle_incoming[k,web_auswahl_incoming]
+      webuebersicht[k,c((length(web_auswahl_incoming)+1):(length(web_auswahl_incoming)+length(web_auswahl_tuebingen)))]=tabelle_tuebingen[buddy_matching[k],web_auswahl_tuebingen]
+    }
+  }
+  
+  return(as.data.frame(webuebersicht))
   
   
   #nicht gematchte Incomings
