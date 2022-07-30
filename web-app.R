@@ -38,46 +38,35 @@ ui <- dashboardPage(
       'Speicherort für Matchingergebisse wählen',
       style = 'width: 87%; margin-top: 25px'
     ),
-    div(
-      style = 'width: 87%; margin: auto' ,
-      verbatimTextOutput('path_output', placeholder = TRUE)
-    ),
+    div(style = 'width: 87%; margin: auto',
+        verbatimTextOutput('path_output', placeholder = TRUE)),
     actionButton('start_matching', 'Matching beginnen', style = 'width: 87%; margin-top: 50px'),
     div(
-      img(src = 'UT_Logo.png', style = 'position: absolute; bottom: 3em; left: 8%; width: 87%')
-    ),
-    div(
-      style= 'position: absolute; bottom: 1%; left: 14%', "© Toni Förster – Version: 0.2 "
+      img(src = 'UT_Logo.png', style = 'position: absolute; bottom: 20px; left: 7%; width: 87%')
     )
   ),
   dashboardBody(
-    tags$head(tags$style(HTML('
-        .skin-blue .main-sidebar {
-          background-color: #b4a069;
-        }
-      '))),
-    tags$head(tags$style(HTML('
-        .skin-blue .main-header .logo {
-          background-color: #b4a069;
-        }
-      '))),
-    tags$head(tags$style(HTML('
-        .skin-blue .main-header .logo:hover {
-          background-color: #b4a069;
-        }
-      '))),
-    tags$head(tags$style(HTML('
-        .skin-blue .main-header .navbar {
-          background-color: #a51e37;
-        }
-      '))),
-    tags$head(tags$style(HTML('
-        .skin-blue .main-header .navbar .sidebar-toggle:hover {
-          background-color: #b44d50;
-        }
-      '))),
-    DTOutput('table_results'))
-  
+    tags$head(tags$style(HTML(
+      '.skin-blue .main-sidebar {background-color: #b4a069;}'
+    ))),
+    tags$head(tags$style(
+      HTML('.skin-blue .main-header .logo {background-color: #b4a069;}')
+    )),
+    tags$head(tags$style(
+      HTML(
+        '.skin-blue .main-header .logo:hover {background-color: #b4a069;}'
+      )
+    )),
+    tags$head(tags$style(
+      HTML('.skin-blue .main-header .navbar {background-color: #a51e37;}')
+    )),
+    tags$head(tags$style(
+      HTML(
+        '.skin-blue .main-header .navbar .sidebar-toggle:hover {background-color: #b44d50;}'
+      )
+    )),
+    DTOutput('table_results', height = "90vh")
+  )
 )
 
 server <- function(input, output, session) {
@@ -160,10 +149,28 @@ server <- function(input, output, session) {
         Sys.sleep(5)
       }
       setDT(table_results_df)
-      table_results_df <- datatable(table_results_df, plugins = 'natural', colnames = c('Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft'))
+      setorder(table_results_df, Last.Name.1, na.last = FALSE)
+      table_results_df <-
+        datatable(
+          table_results_df,
+          options = list(pageLength = 15),
+          fillContainer = TRUE,
+          plugins = 'natural',
+          colnames = c(
+            'Name',
+            'Alter',
+            'Geschlecht',
+            'Sprachen',
+            'Ankunft',
+            'Name',
+            'Alter',
+            'Geschlecht',
+            'Sprachen',
+            'Ankunft'
+          )
+        )
       remove_modal_spinner()
-      output$table_results <-
-        renderDT(table_results_df, options = list(lengthChange = FALSE))
+      output$table_results <- renderDT(table_results_df)
     }
   })
 }
