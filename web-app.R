@@ -44,10 +44,39 @@ ui <- dashboardPage(
     ),
     actionButton('start_matching', 'Matching beginnen', style = 'width: 87%; margin-top: 50px'),
     div(
-      style= 'position: absolute; bottom: 1%; left: 14%', "© Toni Förster - Version: 0.2 "
+      img(src = 'UT_Logo.png', style = 'position: absolute; bottom: 3em; left: 8%; width: 87%')
+    ),
+    div(
+      style= 'position: absolute; bottom: 1%; left: 14%', "© Toni Förster – Version: 0.2 "
     )
   ),
-  dashboardBody(DTOutput('table_results'))
+  dashboardBody(
+    tags$head(tags$style(HTML('
+        .skin-blue .main-sidebar {
+          background-color: #b4a069;
+        }
+      '))),
+    tags$head(tags$style(HTML('
+        .skin-blue .main-header .logo {
+          background-color: #b4a069;
+        }
+      '))),
+    tags$head(tags$style(HTML('
+        .skin-blue .main-header .logo:hover {
+          background-color: #b4a069;
+        }
+      '))),
+    tags$head(tags$style(HTML('
+        .skin-blue .main-header .navbar {
+          background-color: #a51e37;
+        }
+      '))),
+    tags$head(tags$style(HTML('
+        .skin-blue .main-header .navbar .sidebar-toggle:hover {
+          background-color: #b44d50;
+        }
+      '))),
+    DTOutput('table_results'))
   
 )
 
@@ -112,6 +141,7 @@ server <- function(input, output, session) {
       table_results_df <- NULL
       
       show_modal_spinner(spin = 'fading-circle',
+                         color = '#a51e37',
                          text = 'Das Matching kann bis zu einer Stunde dauern. Bitte warten…')
       
       table_results_df <-
@@ -130,7 +160,7 @@ server <- function(input, output, session) {
         Sys.sleep(5)
       }
       setDT(table_results_df)
-      table_results_df <- datatable(table_results_df, colnames = c('Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft'))
+      table_results_df <- datatable(table_results_df, plugins = 'natural', colnames = c('Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft'))
       remove_modal_spinner()
       output$table_results <-
         renderDT(table_results_df, options = list(lengthChange = FALSE))
