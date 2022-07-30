@@ -24,14 +24,6 @@ matching_programm <-
     file_kurzuebersicht   <- "Finalmatch_kurz.csv"
     file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
     
-    if (!(file.exists(file_kurzuebersicht))) {
-      file.create(file_kurzuebersicht)
-    }
-    
-    if (!(file.exists(file_gesamtuebersicht))) {
-      file.create(file_gesamtuebersicht)
-    }
-    
     # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
     if (missingArg(dir_output_files)) {
       dir_output <- getwd()
