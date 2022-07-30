@@ -7,6 +7,7 @@
 
 library(matchingR)
 library(stringi)
+library(xlsx)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
 # FUNKTION MATCHING_PROGRAMM
@@ -24,11 +25,14 @@ matching_programm <-
     file_kurzuebersicht   <- "Finalmatch_kurz.csv"
     file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
     
+    xlsx_kurzuebersicht   <- "Finalmatch_kurz.xlsx"
+    xlsx_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.xlsx"
+    
     # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
     if (missingArg(dir_output_files)) {
       dir_output <- getwd()
     } else {
-      if (!(stri_sub(dir_output_files,-1) == "/")) {
+      if (!(stri_sub(dir_output_files, -1) == "/")) {
         dir_output <- paste(dir_output_files, "/", sep = "")
       } else {
         dir_output <- dir_output_files
@@ -36,20 +40,51 @@ matching_programm <-
     }
     
     # liest die beiden uebergebenen Tabellen ein
-    tabelle_incoming <-
-      read.csv(
-        file = file_incoming,
-        header = T,
-        sep = ";",
-        na.strings = c("", "NA")
-      )
-    tabelle_tuebingen <-
-      read.csv(
-        file = file_tuebinger,
-        header = T,
-        sep = ";",
-        na.strings = c("", "NA")
-      )
+    if (stri_sub(file_incoming,-3) == "csv") {
+      tabelle_incoming <-
+        read.csv(
+          file = file_incoming,
+          header = T,
+          sep = ";",
+          na.strings = c("", "NA")
+        )
+    } else if (stri_sub(file_incoming,-4) == 'xlsx') {
+      tabelle_incoming <-
+        read.xlsx(
+          file = file_incoming,
+          sheetIndex = 1,
+          header = TRUE,
+          as.data.frame = TRUE
+        )
+      # entferne leere Zeilen
+      tabelle_incoming <- tabelle_incoming[!apply(is.na(tabelle_incoming) | tabelle_incoming == "", 1, all),]
+    } else {
+      stop("Falsches Dateiformat")
+    }
+    
+    if (stri_sub(file_tuebinger,-3) == "csv")
+    {
+      tabelle_tuebingen <-
+        read.csv(
+          file = file_tuebinger,
+          header = T,
+          sep = ";",
+          na.strings = c("", "NA")
+        )
+    } else if (stri_sub(file_tuebinger,-4) == "xlsx")
+    {
+      tabelle_tuebingen <-
+        read.xlsx(
+          file = file_tuebinger,
+          sheetIndex = 1,
+          header = TRUE,
+          as.data.frame = TRUE
+        )
+      # entferne leere Zeilen
+      tabelle_tuebingen <- tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) | tabelle_tuebingen == "", 1, all),]
+    } else {
+      stop("Falsches Dateifromat")
+    }
     
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
     Spalte_2_Buddys = c(18)
@@ -109,7 +144,7 @@ matching_programm <-
         # fuer jedes Paar aus Austauschstudentem und Tuebinger Buddy wird ein Wert berechnet;
         # je hoeher der Wert, umso besser passen die Teilnehmer zusammen
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
-        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
+        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i, ], tabelle_tuebingen[j, ])
         
       }
     }
@@ -134,7 +169,7 @@ matching_programm <-
       }
       if (length(deleted_cols) > 0)
         punkte_matrix <-
-          punkte_matrix[,-deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
+          punkte_matrix[, -deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
       
       for (i in 1:anzahl_incomings) {
         if (!(is.na(matching$proposals[i, 1]))) {
@@ -146,7 +181,7 @@ matching_programm <-
       
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
-          punkte_matrix[-deleted_rows,]
+          punkte_matrix[-deleted_rows, ]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
       
       index_matrix <-
@@ -188,10 +223,10 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
-      data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
+      data.frame(list(tabelle_incoming[1, ], tabelle_tuebingen[buddy_matching[1], ]))
     for (k in 2:nrow(buddy_matching)) {
-      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
-      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
+      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k, ]
+      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1], ]
     }
     
     # KURZueBERSICHT
@@ -231,10 +266,20 @@ matching_programm <-
                                                             length(auswahl_tuebingen)))] = tabelle_tuebingen[buddy_matching[k], auswahl_tuebingen]
     }
     
-    #diese Tabelle wird nun als .csv Datei exportiert
+    # diese Tabelle wird nun als .csv Datei exportiert
     write.csv2(Kurzuebersicht, file.path(dir_output, file_kurzuebersicht))
     write.csv2(ausfuehrliche_uebersicht,
                file.path(dir_output, file_gesamtuebersicht))
+    
+    # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
+    write.xlsx(Kurzuebersicht,
+               file.path(dir_output, xlsx_kurzuebersicht),
+               sheetName = "Kurzübersicht")
+    write.xlsx(
+      ausfuehrliche_uebersicht,
+      file.path(dir_output, xlsx_gesamtuebersicht),
+      sheetName = "Gesamtübersicht"
+    )
     
     # WEBueBERSICHT
     

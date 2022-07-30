@@ -2,6 +2,7 @@ library(shiny)
 library(shinybusy)
 library(shinyFiles)
 library(shinydashboard)
+library(shinyjs)
 library(DT)
 library(data.table)
 
@@ -65,13 +66,14 @@ ui <- dashboardPage(
         '.skin-blue .main-header .navbar .sidebar-toggle:hover {background-color: #b44d50;}'
       )
     )),
+    useShinyjs(),
     DTOutput('table_results', height = "90vh")
   )
 )
 
 server <- function(input, output, session) {
   roots = c(home = '~')
-  filetypes = c('csv')
+  filetypes = c('csv', 'xlsx')
   
   shinyFileChoose(
     input,
@@ -173,6 +175,7 @@ server <- function(input, output, session) {
         )
       remove_modal_spinner()
       output$table_results <- renderDT(table_results_df)
+      addClass(selector = "body", class = "sidebar-collapse")
     }
   })
 }
