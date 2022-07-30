@@ -278,66 +278,6 @@ matching_programm <-
     
     
     #nicht gematchte Incomings
-    
-    
-    # Emails versenden
-    
-    #library(mailR)
-    
-    # sender <- "exchange.buddy@uni-tuebingen.de"
-    #
-    # for(i in 1:anzahl_incomings){
-    # buddy_nr = buddy_matching[i]
-    # recipients <- c(toString(tabelle_incoming[i,Spalte_EMail_Incoming]),toString(tabelle_tuebingen[buddy_nr,Spalte_EMail_Tuebingen]))
-    # send.mail(from = sender,
-    #           to = recipients,
-    #           subject = "Your Exchange Buddy – It’s a match!",
-    #           body = paste("Hello there!",sep="\n", "Congratulations, you two have been matched as Exchange Buddies for the Winter Semester 2019/20!",sep="\n",
-    #                         "We are very happy to let you know the contact info of your Buddy:", sep="\n",
-    #                          underline("International Buddy:"), sep="\n",
-    #                         "First Name: ", toString(tabelle_incoming[i, Spalte_Vorname_Incoming]), sep="\n",
-    #                         "Last Name: ", toString(tabelle_incoming[i, Spalte_Nachname_Incoming]),sep="\n",
-    #                         "Gender: ", toString(tabelle_incoming[i, Spalte_Geschlecht_Incoming]), sep="\n",
-    #                         "Home Country: ", toString(tabelle_incoming[i, Spalte_Land_Incoming]), sep="\n",
-    #                         "Home University: ", toString(tabelle_incoming[i, Spalte_Uni_Incoming]), sep="\n",
-    #                         "Study Program: ", toString(tabelle_incoming[i, Spalte_Studienfach_Incoming]),
-    #                         zweites_Fach(tabelle_incoming[i, Spalte_Studienfach2_Incoming]),
-    #                         "E-Mail Address: ", toString(tabelle_incoming[i,Spalte_EMail_Incoming]) ,sep="\n",
-    #                         "Expected Arrival Date: ", toString(tabelle_incoming[i, Spalte_Datum_Incoming]), sep="\n",
-    #                         "Participation in Start or Kompakt Kurs?: ", toString(tabelle_incoming[i, Spalte_Kurs_Incoming]),sep="\n",
-    #                         "Preffered communication language: ", toString(tabelle_incoming[i, Spalte_comlang_Incoming]), sep="\n",
-    #
-    #                         underline("Tuebinger Buddy:"), sep="\n",
-    #                         "First Name: ", toString(tabelle_tuebingen[buddy_nr, Spalte_Vorname_Tuebingen]), sep="\n",
-    #                         "Last Name: ", toString(tabelle_tuebingen[buddy_nr, Spalte_Nachname_Tuebingen]),sep="\n",
-    #                         "Gender: ", toString(tabelle_tuebingen[buddy_nr, Spalte_Geschlecht_Tuebingen]), sep="\n",
-    #                         "Study Program: ", toString(tabelle_tuebingen[buddy_nr, Spalte_Studienfach_Tuebingen]),
-    #                         zweites_Fach(tabelle_tuebingen[buddy_nr, Spalte_Studienfach2_Tuebingen]),
-    #                         "E-Mail Address: ", toString(tabelle_tuebingen[buddy_nr,Spalte_EMail_Tuebingen]) ,sep="\n"),
-    #                         "Available in Tuebingen from: ", toString(tabelle_tuebingen[buddy_nr, Spalte_Datum_Tuebingen]), sep="\n",
-    #                         "Now it’s up to you to get in touch!", sep="\n",
-    #                         "We hope that the two of you will have a great time getting to know each other, exploring the university and the city of Tuebingen.", sep="\n",
-    #                         "@ the Tuebingen Buddy: Would you like to receive a Certificate confirming your participation in the Exchange Buddy Program?
-    #                         Then please fill out the attached document “Exchange Buddy Confirmation” at the end of the semester and have your International Buddy sign it.
-    #                         Would you like to receive ECTS credits for “Schluesselqualifikation Interkulturelle Kompetenz”, then please fill out the “Exchange Buddy Protokoll” (also attached),
-    #                         and – same procedure – have your International Buddy sign it at the end of the semester. To receive the Certificate or the ECTS,
-    #                         please hand in the respective form to exchange.buddy@uni-tuebingen.de between 1 August and 1 September 2019! Please be aware that we cannot guarantee any ECTS.", sep="\n",
-    #                         "In case you have any questions or concerns in regards to the Exchange Buddy Program, please do not hesitate to contact us.", sep="\n",
-    #                         "Have a wonderful time!", sep= "\n", "Best wishes,",  sep= "\n", "Your", sep= "\n",
-    #                         "Exchange Buddy Team", sep= "\n",
-    #                         "International Office", sep= "\n",
-    #                         "University of Tuebingen", sep= "\n",
-    #                         "Wilhelmstr. 9", sep= "\n",
-    #                         "D-72074 Tuebingen", sep= "\n",
-    #                         "GERMANY", sep= "\n",
-    #                         "exchange.buddy@uni-tuebingen.de", sep= "\n"),
-    #           smtp = list(host.name = "smtpserv.uni-tuebingen.de", port = 25,
-    #                       user.name = "exchange.buddy@uni-tuebingen.de", passwd = "YOURPASSWORD", ssl = TRUE),
-    #         authenticate = TRUE
-    #         send = TRUE
-    #         attach.files = 'Users/Documents/')
-    # }
-    
   }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
