@@ -46,9 +46,9 @@ ui <- dashboardPage(
     )
   ),
   dashboardBody(
-    tags$head(tags$style(HTML(
-      '.skin-blue .main-sidebar {background-color: #b4a069;}'
-    ))),
+    tags$head(tags$style(
+      HTML('.skin-blue .main-sidebar {background-color: #b4a069;}')
+    )),
     tags$head(tags$style(
       HTML('.skin-blue .main-header .logo {background-color: #b4a069;}')
     )),
@@ -160,11 +160,13 @@ server <- function(input, output, session) {
             'Name',
             'Alter',
             'Geschlecht',
+            'Studienfach',
             'Sprachen',
             'Ankunft',
             'Name',
             'Alter',
             'Geschlecht',
+            'Studienfach',
             'Sprachen',
             'Ankunft'
           )

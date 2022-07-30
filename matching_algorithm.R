@@ -246,6 +246,7 @@ matching_programm <-
         Spalte_Nachname_Incoming,
         Spalte_Alter_Incoming,
         Spalte_Geschlecht_Incoming,
+        Spalte_Studienfach_Incoming,
         Spalte_Sprache_Incoming,
         Spalte_Datum_Incoming
       )
@@ -253,6 +254,7 @@ matching_programm <-
         Spalte_Nachname_Tuebingen,
         Spalte_Alter_Tuebingen,
         Spalte_Geschlecht_Tuebingen,
+        Spalte_Studienfach_Tuebingen,
         Spalte_Sprachen_Tuebingen,
         Spalte_Datum_Tuebingen
       )
