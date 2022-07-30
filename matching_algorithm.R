@@ -248,22 +248,23 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht fuer die Ausgabe im UI, die erst ausgewaehlte Daten des Incomings und dann des Tuebinger Buddys enthaelt
     # Welche Spalten enthalten sein sollen, wird in den nachfolgenden Vektoren festgelegt
-    web_auswahl_incoming = c(
-      Spalte_Nachname_Incoming,
-      Spalte_Alter_Incoming,
-      Spalte_Geschlecht_Incoming,
-      Spalte_Sprache_Incoming,
-      Spalte_Datum_Incoming
-    )
-    web_auswahl_tuebingen = c(
-      Spalte_Nachname_Tuebingen,
-      Spalte_Alter_Tuebingen,
-      Spalte_Geschlecht_Tuebingen,
-      Spalte_Sprachen_Tuebingen,
-      Spalte_Datum_Tuebingen
-    )
     
     if (web_app) {
+      web_auswahl_incoming = c(
+        Spalte_Nachname_Incoming,
+        Spalte_Alter_Incoming,
+        Spalte_Geschlecht_Incoming,
+        Spalte_Sprache_Incoming,
+        Spalte_Datum_Incoming
+      )
+      web_auswahl_tuebingen = c(
+        Spalte_Nachname_Tuebingen,
+        Spalte_Alter_Tuebingen,
+        Spalte_Geschlecht_Tuebingen,
+        Spalte_Sprachen_Tuebingen,
+        Spalte_Datum_Tuebingen
+      )
+      
       webuebersicht <-
         data.frame(list(tabelle_incoming[1, web_auswahl_incoming], tabelle_tuebingen[buddy_matching[1], web_auswahl_tuebingen]))
       for (k in 2:nrow(buddy_matching)) {
@@ -272,9 +273,10 @@ matching_programm <-
           length(web_auswahl_incoming) + length(web_auswahl_tuebingen)
         ))] = tabelle_tuebingen[buddy_matching[k], web_auswahl_tuebingen]
       }
+      return(as.data.frame(webuebersicht))
     }
     
-    return(as.data.frame(webuebersicht))
+    
     
     
     #nicht gematchte Incomings
