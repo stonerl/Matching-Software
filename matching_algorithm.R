@@ -212,8 +212,8 @@ matching_programm <- function(file_incoming, file_tuebinger, dir_output_files, w
   
   # Wir erstellen nun eine uebersicht fuer die Ausgabe im UI, die erst ausgewaehlte Daten des Incomings und dann des Tuebinger Buddys enthaelt
   # Welche Spalten enthalten sein sollen, wird in den nachfolgenden Vektoren festgelegt
-  web_auswahl_incoming = c(Spalte_Nachname_Incoming, Spalte_Alter_Incoming, Spalte_Studienabschluss_Incoming, Spalte_Uni_Incoming, Spalte_Datum_Incoming)
-  web_auswahl_tuebingen = c(Spalte_Nachname_Tuebingen, Spalte_Alter_Tuebingen, Spalte_Studienabschluss_Tuebingen, Spalte_Uni_Tuebingen, Spalte_Datum_Tuebingen)
+  web_auswahl_incoming = c(Spalte_Nachname_Incoming, Spalte_Alter_Incoming, Spalte_Geschlecht_Incoming, Spalte_Sprache_Incoming, Spalte_Datum_Incoming)
+  web_auswahl_tuebingen = c(Spalte_Nachname_Tuebingen, Spalte_Alter_Tuebingen, Spalte_Geschlecht_Tuebingen, Spalte_Sprachen_Tuebingen, Spalte_Datum_Tuebingen)
   
   if (web_app){
     webuebersicht <- data.frame(list(tabelle_incoming[1,web_auswahl_incoming],tabelle_tuebingen[buddy_matching[1],web_auswahl_tuebingen]))

@@ -1,5 +1,9 @@
 library(shiny)
+library(shinybusy)
 library(shinyFiles)
+library(shinydashboard)
+library(DT)
+library(data.table)
 
 source('matching_algorithm.R')
 
@@ -40,9 +44,9 @@ ui <- fluidPage(
       actionButton('start_matching', 'Matching beginnen'),
       width = 3,
     ),
-    mainPanel(fluidRow(tableOutput('table_results')),
+    mainPanel(DTOutput('table_results'),
               width = 9),
-    position = c('left')
+    position = c('right')
   ),
   lang = 'de'
 )
@@ -87,43 +91,52 @@ server <- function(input, output, session) {
     filetypes = filetypes
   )
   
-  dir_to_output <<- reactive(input$dir_output)
+  dir_to_output <- reactive(input$dir_output)
   
   output$path_output <- renderText({
     parseDirPath(roots, dir_to_output())
   })
   
   observeEvent(input$start_matching, {
-    showModal(
-      modalDialog(
-        title = 'Matching wurde gestartet',
-        'Dieser Vorgang kann mehrere Minuten dauern.',
-        footer = NULL,
-        easyClose = FALSE,
-        fade = TRUE
-      ),
-      session = session
-    )
-    output$table_results <<-
-      renderTable(data.frame(matching_programm(
-        req(as.character(
+    if (!(isTruthy(input$file_incoming)) |
+        !(isTruthy(input$file_tuebinger)) |
+        !(isTruthy(input$dir_output))) {
+      showModal(
+        modalDialog(
+          title = "Dateien und/oder Ordner fehlen",
+          "Es wurden entweder nicht alle Dateien für das Matching angegeben, oder es fehlt der Ausgabeordner."
+        )
+      )
+    } else {
+      # initialize empty object to hold the dataframe
+      table_results_df <- NULL
+      
+      show_modal_spinner(spin = 'fading-circle',
+                         color = '#A51E37' ,
+                         text = 'Das Matching kann bis zu einer Stunde dauern. Bitte warten…')
+      
+      table_results_df <-
+        matching_programm(req(as.character(
           parseFilePaths(roots, path_to_incoming())$datapath
         )),
         req(as.character(
           parseFilePaths(roots, path_to_tuebinger())$datapath
         )),
-        req(as.character(parseDirPath(
-          roots, dir_to_output()
-        ))),
-        TRUE
-      )),
-      colnames = FALSE,
-      spacing = c('s'))
-    
-    removeModal(session = session)
-    
+        req(as.character(
+          parseDirPath(roots, dir_to_output())
+        )),
+        TRUE)
+      
+      while (is.null(table_results_df)) {
+        Sys.sleep(5)
+      }
+      setDT(table_results_df)
+      table_results_df <- datatable(table_results_df, colnames = c('Name', 'Alter', 'Genus', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Genus', 'Sprachen', 'Ankunft'))
+      remove_modal_spinner()
+      output$table_results <-
+        renderDT(table_results_df, options = list(lengthChange = FALSE))
+    }
   })
 }
 
 shinyApp(ui, server)
-
