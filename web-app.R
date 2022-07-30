@@ -7,48 +7,48 @@ library(data.table)
 
 source('matching_algorithm.R')
 
-ui <- fluidPage(
-  titlePanel(
-    title = div(
-      img(src = 'UT_Logo.png', style = 'width: 15%; height: 15%'),
-      'Buddy-Matching-Programm'
+ui <- dashboardPage(
+  dashboardHeader(title = 'Buddy-Matching'),
+  dashboardSidebar(
+    shinyFilesButton(
+      'file_incoming',
+      'Datei für Incoming',
+      'Incoming-Datei wählen',
+      multiple = FALSE,
+      style = 'width: 87%; margin-top: 25px'
     ),
-    'Buddy-Matching-Programm'
-  ),
-  sidebarLayout(
-    sidebarPanel(
-      shinyFilesButton(
-        'file_incoming',
-        'Datei für Incoming',
-        'Incoming-Datei wählen',
-        multiple = FALSE
-      ),
-      verbatimTextOutput('path_incoming', placeholder = TRUE),
-      br(),
-      shinyFilesButton(
-        'file_tuebinger',
-        'Datei für Tübinger',
-        'Tübinger-Datei wählen',
-        multiple = FALSE
-      ),
-      verbatimTextOutput('path_tuebinger', placeholder = TRUE),
-      br(),
-      shinyDirButton(
-        'dir_output',
-        'Ausgabeordner',
-        'Speicherort für Matchingergebisse wählen'
-      ),
-      verbatimTextOutput('path_output', placeholder = TRUE),
-      br(),
-      br(),
-      actionButton('start_matching', 'Matching beginnen'),
-      width = 3,
+    div(
+      style = 'width: 87%; margin: auto' ,
+      verbatimTextOutput('path_incoming', placeholder = TRUE)
     ),
-    mainPanel(DTOutput('table_results'),
-              width = 9),
-    position = c('right')
+    shinyFilesButton(
+      'file_tuebinger',
+      'Datei für Tübinger',
+      'Tübinger-Datei wählen',
+      multiple = FALSE,
+      style = 'width: 87%; margin-top: 25px'
+    ),
+    div(
+      style = 'width: 87%; margin: auto' ,
+      verbatimTextOutput('path_tuebinger', placeholder = TRUE)
+    ),
+    shinyDirButton(
+      'dir_output',
+      'Ausgabeordner',
+      'Speicherort für Matchingergebisse wählen',
+      style = 'width: 87%; margin-top: 25px'
+    ),
+    div(
+      style = 'width: 87%; margin: auto' ,
+      verbatimTextOutput('path_output', placeholder = TRUE)
+    ),
+    actionButton('start_matching', 'Matching beginnen', style = 'width: 87%; margin-top: 50px'),
+    div(
+      style= 'position: absolute; bottom: 1%; left: 14%', "© Toni Förster - Version: 0.2 "
+    )
   ),
-  lang = 'de'
+  dashboardBody(DTOutput('table_results'))
+  
 )
 
 server <- function(input, output, session) {
@@ -112,7 +112,6 @@ server <- function(input, output, session) {
       table_results_df <- NULL
       
       show_modal_spinner(spin = 'fading-circle',
-                         color = '#A51E37' ,
                          text = 'Das Matching kann bis zu einer Stunde dauern. Bitte warten…')
       
       table_results_df <-
@@ -131,7 +130,7 @@ server <- function(input, output, session) {
         Sys.sleep(5)
       }
       setDT(table_results_df)
-      table_results_df <- datatable(table_results_df, colnames = c('Name', 'Alter', 'Genus', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Genus', 'Sprachen', 'Ankunft'))
+      table_results_df <- datatable(table_results_df, colnames = c('Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft', 'Name', 'Alter', 'Geschlecht', 'Sprachen', 'Ankunft'))
       remove_modal_spinner()
       output$table_results <-
         renderDT(table_results_df, options = list(lengthChange = FALSE))
