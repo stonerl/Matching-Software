@@ -267,18 +267,20 @@ matching_programm <-
     }
     
     # diese Tabelle wird nun als .csv Datei exportiert
-    write.csv2(Kurzuebersicht, file.path(dir_output, file_kurzuebersicht))
+    write.csv2(Kurzuebersicht, file.path(dir_output, file_kurzuebersicht), row.names = FALSE)
     write.csv2(ausfuehrliche_uebersicht,
-               file.path(dir_output, file_gesamtuebersicht))
+               file.path(dir_output, file_gesamtuebersicht), row.names = FALSE)
     
     # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
     write.xlsx(Kurzuebersicht,
                file.path(dir_output, xlsx_kurzuebersicht),
-               sheetName = "Kurzübersicht")
+               sheetName = "Kurzübersicht",
+               row.names = FALSE)
     write.xlsx(
       ausfuehrliche_uebersicht,
       file.path(dir_output, xlsx_gesamtuebersicht),
-      sheetName = "Gesamtübersicht"
+      sheetName = "Gesamtübersicht",
+      row.names = FALSE
     )
     
     # WEBueBERSICHT
