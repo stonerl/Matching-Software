@@ -9,6 +9,20 @@ library(data.table)
 
 source('matching_algorithm.R')
 
+resetTable <- c(
+  "function(e, dt, node, config){",
+  "  dt.iterator('table', function(s){",
+  "    s.aaSorting.length = 0;",
+  "    s.aiDisplay.sort(function(a,b){",
+  "       return a-b;",
+  "    });",
+  "    s.aiDisplayMaster.sort(function(a,b){",
+  "       return a-b;",
+  "    });",
+  "  }).draw();",
+  "}"
+)
+
 filetypes <-
   c(
     '.xlsx',
@@ -32,7 +46,7 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tags$head(tags$style(
-      HTML('.skin-blue .main-sidebar {background-color: #b4a069;}')
+      HTML('.skin-blue .main-sidebar {background-color: #bba976;}')
     )),
     tags$head(tags$style(
       HTML('.skin-blue .main-header .logo {background-color: #b4a069;}')
@@ -91,9 +105,23 @@ server <- function(input, output, session) {
     table_results_df <-
       datatable(
         table_results_df,
-        options = list(pageLength = 15),
-        fillContainer = TRUE,
-        plugins = 'natural',
+          options = list(
+            pageLength = 25,
+            lengthMenu = list(c(10, 25, 50, 75, 100,-1), c(10, 25, 50, 75, 100, 'Alle')),
+            dom = "Bftip",
+            buttons = list(
+              'pageLength',
+              list(
+                extend = 'collection',
+                text = 'Sortierung zurücksetzen',
+                action = JS(resetTable)
+              ),
+              'searchPanes'
+            )
+          ),
+          fillContainer = TRUE,
+          extensions = 'Buttons',
+          plugins = 'natural',
         colnames = c(
           'Name',
           'Alter',
