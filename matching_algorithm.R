@@ -29,13 +29,16 @@ matching_programm <-
     xlsx_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.xlsx"
     
     # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
-    if (missingArg(dir_output_files)) {
-      dir_output <- getwd()
-    } else {
-      if (!(stri_sub(dir_output_files, -1) == "/")) {
-        dir_output <- paste(dir_output_files, "/", sep = "")
+    # wenn FALSE, kommt die Abfrage von der web-app und nichts wird erzeugt
+    if (!(web_app)) {
+      if (missingArg(dir_output_files)) {
+        dir_output <- getwd()
       } else {
-        dir_output <- dir_output_files
+        if (!(stri_sub(dir_output_files,-1) == "/")) {
+          dir_output <- paste(dir_output_files, "/", sep = "")
+        } else {
+          dir_output <- dir_output_files
+        }
       }
     }
     
@@ -266,22 +269,31 @@ matching_programm <-
                                                             length(auswahl_tuebingen)))] = tabelle_tuebingen[buddy_matching[k], auswahl_tuebingen]
     }
     
-    # diese Tabelle wird nun als .csv Datei exportiert
-    write.csv2(Kurzuebersicht, file.path(dir_output, file_kurzuebersicht), row.names = FALSE)
-    write.csv2(ausfuehrliche_uebersicht,
-               file.path(dir_output, file_gesamtuebersicht), row.names = FALSE)
-    
-    # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
-    write.xlsx(Kurzuebersicht,
-               file.path(dir_output, xlsx_kurzuebersicht),
-               sheetName = "Kurzübersicht",
-               row.names = FALSE)
-    write.xlsx(
-      ausfuehrliche_uebersicht,
-      file.path(dir_output, xlsx_gesamtuebersicht),
-      sheetName = "Gesamtübersicht",
-      row.names = FALSE
-    )
+    if (!(web_app)) {
+      # diese Tabelle wird nun als .csv Datei exportiert
+      write.csv2(Kurzuebersicht,
+                 file.path(dir_output, file_kurzuebersicht),
+                 row.names = FALSE)
+      write.csv2(
+        ausfuehrliche_uebersicht,
+        file.path(dir_output, file_gesamtuebersicht),
+        row.names = FALSE
+      )
+      
+      # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
+      write.xlsx(
+        Kurzuebersicht,
+        file.path(dir_output, xlsx_kurzuebersicht),
+        sheetName = "Kurzübersicht",
+        row.names = FALSE
+      )
+      write.xlsx(
+        ausfuehrliche_uebersicht,
+        file.path(dir_output, xlsx_gesamtuebersicht),
+        sheetName = "Gesamtübersicht",
+        row.names = FALSE
+      )
+    }
     
     # WEBueBERSICHT
     
