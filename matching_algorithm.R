@@ -172,9 +172,9 @@ matching_programm <-
     } else {
       stop("Falsches Dateifromat")
     }
-    
+
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
-    Spalte_2_Buddys = c(17)
+    Spalte_2_Buddys = c(16)
     
     #gibt die Spalte an, in der die E-Mail Adresse steht
     Spalte_Email_Incoming = c(3)
