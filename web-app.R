@@ -38,7 +38,7 @@ ui <- dashboardPage(
     fileInput('file_tuebinger', 'Tübinger', accept = filetypes),
     
     disabled(
-      actionButton('start_matching', 'Matching beginnen', style = 'width: 87%; margin-top: 55px')
+      actionButton('start_matching', 'Start matching', style = 'width: 87%; margin-top: 55px')
     ),
     div(
       img(src = 'UT_Logo.png', style = 'position: absolute; bottom: 20px; left: 7%; width: 87%')
@@ -89,7 +89,7 @@ server <- function(input, output, session) {
     
     show_modal_spinner(spin = 'fading-circle',
                        color = '#a51e37',
-                       text = 'Das Matching kann bis zu einer Stunde dauern. Bitte warten…')
+                       text = 'Matching can take up to one hour. Please wait…')
     
     table_results_df <-
       matching_programm(req(as.character(file_incomings()$datapath)),
@@ -107,16 +107,19 @@ server <- function(input, output, session) {
         table_results_df,
           options = list(
             pageLength = 25,
-            lengthMenu = list(c(10, 25, 50, 75, 100,-1), c(10, 25, 50, 75, 100, 'Alle')),
+            lengthMenu = list(c(10, 25, 50, 75, 100,-1), c(10, 25, 50, 75, 100, 'All')),
             dom = "Bftip",
             buttons = list(
               'pageLength',
               list(
                 extend = 'collection',
-                text = 'Sortierung zurücksetzen',
+                text = 'Reset sorting',
                 action = JS(resetTable)
               ),
-              'searchPanes'
+              list(
+                extend = 'excel',
+                text = 'Export to Excel'
+              )
             )
           ),
           fillContainer = TRUE,
