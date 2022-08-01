@@ -64,7 +64,7 @@ matching_programm <-
       if (missingArg(dir_output_files)) {
         dir_output <- getwd()
       } else {
-        if (!(stri_sub(dir_output_files, -1) == "/")) {
+        if (!(stri_sub(dir_output_files,-1) == "/")) {
           dir_output <- paste(dir_output_files, "/", sep = "")
         } else {
           dir_output <- dir_output_files
@@ -117,7 +117,7 @@ matching_programm <-
                        22)
     
     # liest die beiden uebergebenen Tabellen ein
-    if (stri_sub(file_incoming, -3) == "csv") {
+    if (stri_sub(file_incoming,-3) == "csv") {
       tabelle_incoming <-
         read.csv(
           file = file_incoming,
@@ -126,7 +126,7 @@ matching_programm <-
           sep = ";",
           na.strings = c("", "NA")
         )
-    } else if (stri_sub(file_incoming, -4) == 'xlsx') {
+    } else if (stri_sub(file_incoming,-4) == 'xlsx') {
       tabelle_incoming <-
         read.xlsx2(
           file = file_incoming,
@@ -139,12 +139,12 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_incoming <-
         tabelle_incoming[!apply(is.na(tabelle_incoming) |
-                                  tabelle_incoming == "", 1, all), ]
+                                  tabelle_incoming == "", 1, all),]
     } else {
       stop("Falsches Dateiformat")
     }
     
-    if (stri_sub(file_tuebinger, -3) == "csv")
+    if (stri_sub(file_tuebinger,-3) == "csv")
     {
       tabelle_tuebingen <-
         read.csv(
@@ -154,7 +154,7 @@ matching_programm <-
           sep = ";",
           na.strings = c("", "NA")
         )
-    } else if (stri_sub(file_tuebinger, -4) == "xlsx")
+    } else if (stri_sub(file_tuebinger,-4) == "xlsx")
     {
       tabelle_tuebingen <-
         read.xlsx2(
@@ -168,7 +168,7 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_tuebingen <-
         tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) |
-                                   tabelle_tuebingen == "", 1, all), ]
+                                   tabelle_tuebingen == "", 1, all),]
     } else {
       stop("Falsches Dateifromat")
     }
@@ -201,7 +201,7 @@ matching_programm <-
         # fuer jedes Paar aus Austauschstudentem und Tuebinger Buddy wird ein Wert berechnet;
         # je hoeher der Wert, umso besser passen die Teilnehmer zusammen
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
-        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
+        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i, ], tabelle_tuebingen[j, ])
         
       }
     }
@@ -226,7 +226,7 @@ matching_programm <-
       }
       if (length(deleted_cols) > 0)
         punkte_matrix <-
-          punkte_matrix[,-deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
+          punkte_matrix[, -deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
       
       for (i in 1:anzahl_incomings) {
         if (!(is.na(matching$proposals[i, 1]))) {
@@ -238,7 +238,7 @@ matching_programm <-
       
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
-          punkte_matrix[-deleted_rows,]
+          punkte_matrix[-deleted_rows, ]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
       
       index_matrix <-
@@ -280,10 +280,10 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
-      data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
+      data.frame(list(tabelle_incoming[1, ], tabelle_tuebingen[buddy_matching[1], ]))
     for (k in 2:nrow(buddy_matching)) {
-      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
-      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
+      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k, ]
+      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1], ]
     }
     
     # KURZueBERSICHT
