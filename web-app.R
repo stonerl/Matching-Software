@@ -6,6 +6,7 @@ library(shinyjs)
 library(tools)
 library(DT)
 library(data.table)
+library(xlsx)
 
 source('matching_algorithm.R')
 
@@ -34,12 +35,12 @@ filetypes <-
 ui <- dashboardPage(
   dashboardHeader(title = 'Buddy-Matching'),
   dashboardSidebar(
+    disabled(
+      actionButton('start_matching', 'Start matching', style = 'width: 87%; margin-top: 10px; margin-bottom: 10px')
+    ),
     fileInput('file_incomings', 'Incomings', accept = filetypes),
     fileInput('file_tuebinger', 'Tübinger', accept = filetypes),
-    
-    disabled(
-      actionButton('start_matching', 'Start matching', style = 'width: 87%; margin-top: 55px')
-    ),
+    fileInput('file_matching', 'Load previous matching data', accept = filetypes),
     div(
       img(src = 'UT_Logo.png', style = 'position: absolute; bottom: 20px; left: 7%; width: 87%')
     )
@@ -72,8 +73,10 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
   file_incomings <- reactive(input$file_incomings)
   file_tuebinger <- reactive(input$file_tuebinger)
+  file_matching <- reactive(input$file_matching)
   
   observeEvent(list(file_incomings(), file_tuebinger()), {
+    # TODO
     # used to check file extensions later
     ext_incomings <- file_ext(file_incomings()$datapath)
     ext_tuebinger <- file_ext(file_incomings()$datapath)
@@ -83,6 +86,157 @@ server <- function(input, output, session) {
       enable('start_matching')
     }
   })
+  
+  observeEvent(file_matching(), {
+    # TODO
+    # used to check file extensions later
+    ext_matching <- file_ext(file_matching()$datapath)
+    
+    req(file_matching())
+    table_results_df <- read.xlsx2(
+      file = file_matching()$datapath,
+      sheetIndex = 1,
+      startRow = 2,
+      header = TRUE,
+      colClasses = NA,
+      as.data.frame = TRUE
+    )
+    # TODO
+    # refactor copy-paste code
+    # fail gracefuly when wrong file is supplied
+    setDT(table_results_df)
+    setorder(
+      table_results_df,
+      ECTS,
+      na.last = FALSE
+    )
+    table_results_df <-
+      datatable(
+        table_results_df,
+        options = list(
+          pageLength = 25,
+          lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
+          colReorder = TRUE,
+          keys = TRUE,
+          dom = "Bftip",
+          buttons = list(
+            'pageLength',
+            list(
+              extend = 'collection',
+              text = 'Reset sorting',
+              action = JS(resetTable)
+            ),
+            list(extend = 'excel',
+                 text = 'Export to Excel')
+          ),
+          columnDefs = list(list(
+            visible = FALSE,
+            targets = c(
+              # Incomings
+              # First name
+              2,
+              # Email
+              3,
+              # 2nd Major
+              7,
+              # Degree
+              8,
+              # University
+              10,
+              # University free text
+              11,
+              # Communication Language
+              12,
+              # Hobby 1
+              13,
+              # Hobby 2
+              14,
+              # Hobby 3
+              15,
+              # Pre-Course
+              17,
+              # Inform Buddy
+              19,
+              # Comments
+              20,
+              # Tuebinger
+              # First name
+              22,
+              # Email
+              23,
+              # 2nd Major
+              27,
+              # Degree
+              28,
+              # University
+              30,
+              # University free text
+              31,
+              # Hobby 1
+              32,
+              # Hobby 2
+              33,
+              # Hobby 3
+              34,
+              # 2 Buddies
+              36,
+              # Inform Buddy
+              39,
+              # Comments
+              40
+            )
+          ))
+        ),
+        fillContainer = TRUE,
+        extensions = c('Buttons', 'ColReorder', 'KeyTable'),
+        plugins = 'natural',
+        colnames = c(
+          'Last name',
+          'First name',
+          'Email',
+          'Age',
+          'Gender',
+          'Major',
+          '2nd Major',
+          'Degree',
+          'Country',
+          'University',
+          'University free text',
+          'Communication Language',
+          'Hobby 1',
+          'Hobby 2',
+          'Hobby 3',
+          'Languages',
+          'Pre-Course',
+          'Arrival',
+          'Inform Buddy',
+          'Comments',
+          'Last name',
+          'First name',
+          'Email',
+          'Age',
+          'Gender',
+          'Major',
+          '2nd Major',
+          'Degree',
+          'Country',
+          'University',
+          'University free text',
+          'Hobby 1',
+          'Hobby 2',
+          'Hobby 3',
+          'Languages',
+          '2 Buddies',
+          'Available',
+          'ECTS',
+          'Inform Buddy',
+          'Comments'
+        )
+      )
+    output$table_results <- renderDT(table_results_df)
+    addClass(selector = "body", class = "sidebar-collapse")
+  })
+  
   observeEvent(input$start_matching, {
     # initialize empty object to hold the dataframe
     table_results_df <- NULL
