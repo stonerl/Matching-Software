@@ -101,13 +101,19 @@ server <- function(input, output, session) {
       Sys.sleep(5)
     }
     setDT(table_results_df)
-    setorder(table_results_df, Would.you.like.to.receive.ECTS.credit.points.for.the.Studium.Professionale..Key.Qualifications...Intercultural.Competency...., na.last = FALSE)
+    setorder(
+      table_results_df,
+      Would.you.like.to.receive.ECTS.credit.points.for.the.Studium.Professionale..Key.Qualifications...Intercultural.Competency....,
+      na.last = FALSE
+    )
     table_results_df <-
       datatable(
         table_results_df,
         options = list(
           pageLength = 25,
           lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
+          colReorder = TRUE,
+          keys = TRUE,
           dom = "Bftip",
           buttons = list(
             'pageLength',
@@ -178,7 +184,7 @@ server <- function(input, output, session) {
           ))
         ),
         fillContainer = TRUE,
-        extensions = 'Buttons',
+        extensions = c('Buttons', 'ColReorder', 'KeyTable'),
         plugins = 'natural',
         colnames = c(
           'Last name',
