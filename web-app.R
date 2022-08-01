@@ -101,43 +101,126 @@ server <- function(input, output, session) {
       Sys.sleep(5)
     }
     setDT(table_results_df)
-    setorder(table_results_df, Last.Name.1, na.last = FALSE)
+    setorder(table_results_df, Would.you.like.to.receive.ECTS.credit.points.for.the.Studium.Professionale..Key.Qualifications...Intercultural.Competency...., na.last = FALSE)
     table_results_df <-
       datatable(
         table_results_df,
-          options = list(
-            pageLength = 25,
-            lengthMenu = list(c(10, 25, 50, 75, 100,-1), c(10, 25, 50, 75, 100, 'All')),
-            dom = "Bftip",
-            buttons = list(
-              'pageLength',
-              list(
-                extend = 'collection',
-                text = 'Reset sorting',
-                action = JS(resetTable)
-              ),
-              list(
-                extend = 'excel',
-                text = 'Export to Excel'
-              )
-            )
+        options = list(
+          pageLength = 25,
+          lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
+          dom = "Bftip",
+          buttons = list(
+            'pageLength',
+            list(
+              extend = 'collection',
+              text = 'Reset sorting',
+              action = JS(resetTable)
+            ),
+            list(extend = 'excel',
+                 text = 'Export to Excel')
           ),
-          fillContainer = TRUE,
-          extensions = 'Buttons',
-          plugins = 'natural',
+          columnDefs = list(list(
+            visible = FALSE,
+            targets = c(
+              # Incomings
+              # First name
+              2,
+              # Email
+              3,
+              # 2nd Major
+              7,
+              # Degree
+              8,
+              # University
+              10,
+              # University free text
+              11,
+              # Communication Language
+              12,
+              # Hobby 1
+              13,
+              # Hobby 2
+              14,
+              # Hobby 3
+              15,
+              # Pre-Course
+              17,
+              # Inform Buddy
+              19,
+              # Comments
+              20,
+              # Tuebinger
+              # First name
+              22,
+              # Email
+              23,
+              # 2nd Major
+              27,
+              # Degree
+              28,
+              # University
+              30,
+              # University free text
+              31,
+              # Hobby 1
+              32,
+              # Hobby 2
+              33,
+              # Hobby 3
+              34,
+              # 2 Buddies
+              36,
+              # Inform Buddy
+              39,
+              # Comments
+              40
+            )
+          ))
+        ),
+        fillContainer = TRUE,
+        extensions = 'Buttons',
+        plugins = 'natural',
         colnames = c(
-          'Name',
-          'Alter',
-          'Geschlecht',
-          'Studienfach',
-          'Sprachen',
-          'Ankunft',
-          'Name',
-          'Alter',
-          'Geschlecht',
-          'Studienfach',
-          'Sprachen',
-          'Ankunft'
+          'Last name',
+          'First name',
+          'Email',
+          'Age',
+          'Gender',
+          'Major',
+          '2nd Major',
+          'Degree',
+          'Country',
+          'University',
+          'University free text',
+          'Communication Language',
+          'Hobby 1',
+          'Hobby 2',
+          'Hobby 3',
+          'Languages',
+          'Pre-Course',
+          'Arrival',
+          'Inform Buddy',
+          'Comments',
+          'Last name',
+          'First name',
+          'Email',
+          'Age',
+          'Gender',
+          'Major',
+          '2nd Major',
+          'Degree',
+          'Country',
+          'University',
+          'University free text',
+          'Hobby 1',
+          'Hobby 2',
+          'Hobby 3',
+          'Languages',
+          '2 Buddies',
+          'Available',
+          'ECTS',
+          'Inform Buddy',
+          'Comments'
         )
       )
     remove_modal_spinner()
