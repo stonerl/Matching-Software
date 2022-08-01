@@ -9,6 +9,36 @@ library(matchingR)
 library(stringi)
 library(xlsx)
 
+Spalte_Alter_Tuebingen = c(4)
+Spalte_Geschlecht_Tuebingen = c(5)
+Spalte_Studienfach_Tuebingen = c(6)
+Spalte_Studienfach2_Tuebingen = c(7)
+Spalte_Studienabschluss_Tuebingen = c(8)
+Spalte_Land_Tuebingen = c(9)
+Spalte_Uni_Tuebingen = c(10)
+Spalte_Uni_Tuebingen_Freitext = c(11)
+Spalte_Hobby1_Tuebingen = c(12)
+Spalte_Hobby2_Tuebingen = c(13)
+Spalte_Hobby3_Tuebingen = c(14)
+Spalte_Sprachen_Tuebingen = c(15)
+Spalte_Datum_Tuebingen = c(17)
+
+Spalte_Alter_Incoming = c(4)
+Spalte_Geschlecht_Incoming = c(5)
+Spalte_Studienfach_Incoming = c(6)
+Spalte_Studienfach2_Incoming = c(7)
+Spalte_Studienabschluss_Incoming = c(8)
+Spalte_Land_Incoming = c(9)
+Spalte_Uni_Incoming = c(10)
+Spalte_Uni_Incoming_Freitext = c(11)
+Spalte_comlang_Incoming = c(12)
+Spalte_Hobby1_Incoming = c(13)
+Spalte_Hobby2_Incoming = c(14)
+Spalte_Hobby3_Incoming = c(15)
+Spalte_Sprache_Incoming = c(16)
+Spalte_Kurs_Incoming = c(17)
+Spalte_Datum_Incoming = c(18)
+
 # ----------------------------------------------------------------------------------------------------------------------------------------
 # FUNKTION MATCHING_PROGRAMM
 #-----------------------------------------------------------------------------------------------------------------------------------------
@@ -34,7 +64,7 @@ matching_programm <-
       if (missingArg(dir_output_files)) {
         dir_output <- getwd()
       } else {
-        if (!(stri_sub(dir_output_files,-1) == "/")) {
+        if (!(stri_sub(dir_output_files, -1) == "/")) {
           dir_output <- paste(dir_output_files, "/", sep = "")
         } else {
           dir_output <- dir_output_files
@@ -42,97 +72,121 @@ matching_programm <-
       }
     }
     
+    # definiere die Spalten die eingelesen werden sollen
+    spalten_csv <- c('NULL',
+                     NA,
+                     NA,
+                     NA,
+                     'NULL',
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA,
+                     NA)
+    
+    spalten_excel <- c(2,
+                       3,
+                       4,
+                       6,
+                       7,
+                       8,
+                       9,
+                       10,
+                       11,
+                       12,
+                       13,
+                       14,
+                       15,
+                       16,
+                       17,
+                       18,
+                       19,
+                       20,
+                       21,
+                       22)
+    
     # liest die beiden uebergebenen Tabellen ein
-    if (stri_sub(file_incoming,-3) == "csv") {
+    if (stri_sub(file_incoming, -3) == "csv") {
       tabelle_incoming <-
         read.csv(
           file = file_incoming,
+          colClasses = spalten_csv,
           header = T,
           sep = ";",
           na.strings = c("", "NA")
         )
-    } else if (stri_sub(file_incoming,-4) == 'xlsx') {
+    } else if (stri_sub(file_incoming, -4) == 'xlsx') {
       tabelle_incoming <-
-        read.xlsx(
+        read.xlsx2(
           file = file_incoming,
           sheetIndex = 1,
+          colIndex = spalten_excel,
           header = TRUE,
+          colClasses = NA,
           as.data.frame = TRUE
         )
       # entferne leere Zeilen
-      tabelle_incoming <- tabelle_incoming[!apply(is.na(tabelle_incoming) | tabelle_incoming == "", 1, all),]
+      tabelle_incoming <-
+        tabelle_incoming[!apply(is.na(tabelle_incoming) |
+                                  tabelle_incoming == "", 1, all), ]
     } else {
       stop("Falsches Dateiformat")
     }
     
-    if (stri_sub(file_tuebinger,-3) == "csv")
+    if (stri_sub(file_tuebinger, -3) == "csv")
     {
       tabelle_tuebingen <-
         read.csv(
           file = file_tuebinger,
+          colClasses = spalten_csv,
           header = T,
           sep = ";",
           na.strings = c("", "NA")
         )
-    } else if (stri_sub(file_tuebinger,-4) == "xlsx")
+    } else if (stri_sub(file_tuebinger, -4) == "xlsx")
     {
       tabelle_tuebingen <-
-        read.xlsx(
+        read.xlsx2(
           file = file_tuebinger,
           sheetIndex = 1,
+          colIndex = spalten_excel,
           header = TRUE,
+          colClasses = NA,
           as.data.frame = TRUE
         )
       # entferne leere Zeilen
-      tabelle_tuebingen <- tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) | tabelle_tuebingen == "", 1, all),]
+      tabelle_tuebingen <-
+        tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) |
+                                   tabelle_tuebingen == "", 1, all), ]
     } else {
       stop("Falsches Dateifromat")
     }
     
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
-    Spalte_2_Buddys = c(18)
+    Spalte_2_Buddys = c(17)
     
     #gibt die Spalte an, in der die E-Mail Adresse steht
-    Spalte_EMail_Incoming = c(4)
-    Spalte_Email_Tuebingen = c(4)
+    Spalte_Email_Incoming = c(3)
+    Spalte_Email_Tuebingen = c(3)
     
     #gibt die Spalte an, in der der Vorname steht
-    Spalte_Vorname_Incoming = c(3)
-    Spalte_Vorname_Tuebingen = c(3)
+    Spalte_Vorname_Incoming = c(2)
+    Spalte_Vorname_Tuebingen = c(2)
     
     #gibt die Spalte an, in der der Nachname steht
-    Spalte_Nachname_Incoming = c(2)
-    Spalte_Nachname_Tuebingen = c(2)
-    
-    Spalte_Alter_Tuebingen = c(6)
-    Spalte_Geschlecht_Tuebingen = c(7)
-    Spalte_Studienfach_Tuebingen = c(8)
-    Spalte_Studienfach2_Tuebingen = c(9)
-    Spalte_Studienabschluss_Tuebingen = c(10)
-    Spalte_Land_Tuebingen = c(11)
-    Spalte_Uni_Tuebingen = c(12)
-    Spalte_Uni_Tuebingen_Freitext = c(13)
-    Spalte_Hobby1_Tuebingen = c(14)
-    Spalte_Hobby2_Tuebingen = c(15)
-    Spalte_Hobby3_Tuebingen = c(16)
-    Spalte_Sprachen_Tuebingen = c(17)
-    Spalte_Datum_Tuebingen = c(19)
-    
-    Spalte_Alter_Incoming = c(6)
-    Spalte_Geschlecht_Incoming = c(7)
-    Spalte_Studienfach_Incoming = c(8)
-    Spalte_Studienfach2_Incoming = c(9)
-    Spalte_Studienabschluss_Incoming = c(10)
-    Spalte_Land_Incoming = c(11)
-    Spalte_Uni_Incoming = c(12)
-    Spalte_Uni_Incoming_Freitext = c(13)
-    Spalte_comlang_Incoming = c(14)
-    Spalte_Hobby1_Incoming = c(15)
-    Spalte_Hobby2_Incoming = c(16)
-    Spalte_Hobby3_Incoming = c(17)
-    Spalte_Sprache_Incoming = c(18)
-    Spalte_Kurs_Incoming = c(19)
-    Spalte_Datum_Incoming = c(20)
+    Spalte_Nachname_Incoming = c(1)
+    Spalte_Nachname_Tuebingen = c(1)
     
     # merkt sich in den Variablen, wie viele Reihen die Tabellen haben, d.h. wie viele Buddys sich angemeldet haben
     anzahl_incomings = nrow(tabelle_incoming)
@@ -147,7 +201,7 @@ matching_programm <-
         # fuer jedes Paar aus Austauschstudentem und Tuebinger Buddy wird ein Wert berechnet;
         # je hoeher der Wert, umso besser passen die Teilnehmer zusammen
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
-        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i, ], tabelle_tuebingen[j, ])
+        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
         
       }
     }
@@ -172,7 +226,7 @@ matching_programm <-
       }
       if (length(deleted_cols) > 0)
         punkte_matrix <-
-          punkte_matrix[, -deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
+          punkte_matrix[,-deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
       
       for (i in 1:anzahl_incomings) {
         if (!(is.na(matching$proposals[i, 1]))) {
@@ -184,7 +238,7 @@ matching_programm <-
       
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
-          punkte_matrix[-deleted_rows, ]
+          punkte_matrix[-deleted_rows,]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
       
       index_matrix <-
@@ -226,10 +280,10 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
-      data.frame(list(tabelle_incoming[1, ], tabelle_tuebingen[buddy_matching[1], ]))
+      data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
     for (k in 2:nrow(buddy_matching)) {
-      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k, ]
-      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1], ]
+      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
+      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
     }
     
     # KURZueBERSICHT
@@ -281,17 +335,19 @@ matching_programm <-
       )
       
       # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
-      write.xlsx(
+      write.xlsx2(
         Kurzuebersicht,
         file.path(dir_output, xlsx_kurzuebersicht),
         sheetName = "Kurzübersicht",
-        row.names = FALSE
+        row.names = FALSE,
+        showNA = TRUE
       )
-      write.xlsx(
+      write.xlsx2(
         ausfuehrliche_uebersicht,
         file.path(dir_output, xlsx_gesamtuebersicht),
         sheetName = "Gesamtübersicht",
-        row.names = FALSE
+        row.names = FALSE,
+        showNA = TRUE
       )
     }
     
@@ -346,36 +402,6 @@ matching_programm <-
 punkte_algorithmus <-
   function(incoming, tuebingen) {
     #header wird mit uebergeben
-    
-    # Definition der Spaltenvariablen, die angeben, in welcher Spalte der jeweiligen Tabelle sich die Informationen befinden
-    Spalte_Alter_Tuebingen = c(6)
-    Spalte_Geschlecht_Tuebingen = c(7)
-    Spalte_Studienfach_Tuebingen = c(8)
-    Spalte_Studienfach2_Tuebingen = c(9)
-    Spalte_Studienabschluss_Tuebingen = c(10)
-    Spalte_Land_Tuebingen = c(11)
-    Spalte_Uni_Tuebingen = c(12)
-    Spalte_Uni_Tuebingen_Freitext = c(13)
-    Spalte_Hobby1_Tuebingen = c(14)
-    Spalte_Hobby2_Tuebingen = c(15)
-    Spalte_Hobby3_Tuebingen = c(16)
-    Spalte_Sprachen_Tuebingen = c(17)
-    Spalte_Datum_Tuebingen = c(19)
-    
-    Spalte_Alter_Incoming = c(6)
-    Spalte_Geschlecht_Incoming = c(7)
-    Spalte_Studienfach_Incoming = c(8)
-    Spalte_Studienfach2_Incoming = c(9)
-    Spalte_Studienabschluss_Incoming = c(10)
-    Spalte_Land_Incoming = c(11)
-    Spalte_Uni_Incoming = c(12)
-    Spalte_Uni_Incoming_Freitext = c(13)
-    Spalte_Hobby1_Incoming = c(15)
-    Spalte_Hobby2_Incoming = c(16)
-    Spalte_Hobby3_Incoming = c(17)
-    Spalte_Sprache_Incoming = c(18)
-    Spalte_Datum_Incoming = c(20)
-    
     
     # Definition der Gewichtungsvariablen: wie viele Punkte gibt welche uebereinstimmung #Default
     
