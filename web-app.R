@@ -116,7 +116,6 @@ server <- function(input, output, session) {
         options = list(
           pageLength = 25,
           lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
-          colReorder = TRUE,
           keys = TRUE,
           dom = "Bftip",
           buttons = list(
@@ -188,7 +187,7 @@ server <- function(input, output, session) {
           ))
         ),
         fillContainer = TRUE,
-        extensions = c('Buttons', 'ColReorder', 'KeyTable'),
+        extensions = c('Buttons', 'KeyTable'),
         plugins = 'natural',
         colnames = c(
           'Last name',
@@ -266,7 +265,6 @@ server <- function(input, output, session) {
         options = list(
           pageLength = 25,
           lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
-          colReorder = TRUE,
           keys = TRUE,
           dom = "Bftip",
           buttons = list(
@@ -338,7 +336,7 @@ server <- function(input, output, session) {
           ))
         ),
         fillContainer = TRUE,
-        extensions = c('Buttons', 'ColReorder', 'KeyTable'),
+        extensions = c('Buttons', 'KeyTable'),
         plugins = 'natural',
         colnames = c(
           'Last name',
