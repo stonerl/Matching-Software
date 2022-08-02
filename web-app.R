@@ -7,22 +7,10 @@ library(tools)
 library(DT)
 library(data.table)
 library(xlsx)
+library(dplyr)
 
 source('matching_algorithm.R')
-
-resetTable <- c(
-  "function(e, dt, node, config){",
-  "  dt.iterator('table', function(s){",
-  "    s.aaSorting.length = 0;",
-  "    s.aiDisplay.sort(function(a,b){",
-  "       return a-b;",
-  "    });",
-  "    s.aiDisplayMaster.sort(function(a,b){",
-  "       return a-b;",
-  "    });",
-  "  }).draw();",
-  "}"
-)
+source('matching_table.R')
 
 filetypes <-
   c(
@@ -46,6 +34,9 @@ ui <- dashboardPage(
     )
   ),
   dashboardBody(
+    tags$head(tags$style(
+      HTML('.shiny-notification {right: 20px; bottom: 20 px;}')
+    )),
     tags$head(tags$style(
       HTML('.skin-blue .main-sidebar {background-color: #bba976;}')
     )),
@@ -76,314 +67,20 @@ server <- function(input, output, session) {
   file_matching <- reactive(input$file_matching)
   
   observeEvent(list(file_incomings(), file_tuebinger()), {
-    # TODO
-    # used to check file extensions later
-    ext_incomings <- file_ext(file_incomings()$datapath)
-    ext_tuebinger <- file_ext(file_incomings()$datapath)
-    
-    if (isTruthy(file_incomings()) &&
-        isTruthy(file_tuebinger())) {
-      enable('start_matching')
-    }
+    req(file_incomings())
+    req(file_tuebinger())
+    enable('start_matching')
   })
   
   observeEvent(file_matching(), {
-    # TODO
-    # used to check file extensions later
-    ext_matching <- file_ext(file_matching()$datapath)
-    
     req(file_matching())
-    table_results_df <- read.xlsx2(
-      file = file_matching()$datapath,
-      sheetIndex = 1,
-      startRow = 2,
-      header = TRUE,
-      colClasses = NA,
-      as.data.frame = TRUE
-    )
-    # TODO
-    # refactor copy-paste code
-    # fail gracefuly when wrong file is supplied
-    setDT(table_results_df)
-    setorder(
-      table_results_df,
-      ECTS,
-      na.last = FALSE
-    )
-    table_results_df <-
-      datatable(
-        table_results_df,
-        options = list(
-          pageLength = 25,
-          lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
-          keys = TRUE,
-          dom = "Bftip",
-          buttons = list(
-            'pageLength',
-            list(
-              extend = 'collection',
-              text = 'Reset sorting',
-              action = JS(resetTable)
-            ),
-            list(extend = 'excel',
-                 text = 'Export to Excel')
-          ),
-          columnDefs = list(list(
-            visible = FALSE,
-            targets = c(
-              # Incomings
-              # First name
-              2,
-              # Email
-              3,
-              # 2nd Major
-              7,
-              # Degree
-              8,
-              # University
-              10,
-              # University free text
-              11,
-              # Communication Language
-              12,
-              # Hobby 1
-              13,
-              # Hobby 2
-              14,
-              # Hobby 3
-              15,
-              # Pre-Course
-              17,
-              # Inform Buddy
-              19,
-              # Comments
-              20,
-              # Tuebinger
-              # First name
-              22,
-              # Email
-              23,
-              # 2nd Major
-              27,
-              # Degree
-              28,
-              # University
-              30,
-              # University free text
-              31,
-              # Hobby 1
-              32,
-              # Hobby 2
-              33,
-              # Hobby 3
-              34,
-              # 2 Buddies
-              36,
-              # Inform Buddy
-              39,
-              # Comments
-              40
-            )
-          ))
-        ),
-        fillContainer = TRUE,
-        extensions = c('Buttons', 'KeyTable'),
-        plugins = 'natural',
-        colnames = c(
-          'Last name',
-          'First name',
-          'Email',
-          'Age',
-          'Gender',
-          'Major',
-          '2nd Major',
-          'Degree',
-          'Country',
-          'University',
-          'University free text',
-          'Communication Language',
-          'Hobby 1',
-          'Hobby 2',
-          'Hobby 3',
-          'Languages',
-          'Pre-Course',
-          'Arrival',
-          'Inform Buddy',
-          'Comments',
-          'Last name',
-          'First name',
-          'Email',
-          'Age',
-          'Gender',
-          'Major',
-          '2nd Major',
-          'Degree',
-          'Country',
-          'University',
-          'University free text',
-          'Hobby 1',
-          'Hobby 2',
-          'Hobby 3',
-          'Languages',
-          '2 Buddies',
-          'Available',
-          'ECTS',
-          'Inform Buddy',
-          'Comments'
-        )
-      )
-    output$table_results <- renderDT(table_results_df)
-    addClass(selector = "body", class = "sidebar-collapse")
+    output$table_results <-
+      renderDT(matching_table(file_matching()$datapath, NULL))
   })
   
   observeEvent(input$start_matching, {
-    # initialize empty object to hold the dataframe
-    table_results_df <- NULL
-    
-    show_modal_spinner(spin = 'fading-circle',
-                       color = '#a51e37',
-                       text = 'Matching can take up to one hour. Please wait…')
-    
-    table_results_df <-
-      matching_programm(req(as.character(file_incomings()$datapath)),
-                        req(as.character(file_tuebinger()$datapath)),
-                        FALSE,
-                        TRUE)
-    
-    while (is.null(table_results_df)) {
-      Sys.sleep(5)
-    }
-    setDT(table_results_df)
-    setorder(
-      table_results_df,
-      Would.you.like.to.receive.ECTS.credit.points.for.the.Studium.Professionale..Key.Qualifications...Intercultural.Competency....,
-      na.last = FALSE
-    )
-    table_results_df <-
-      datatable(
-        table_results_df,
-        options = list(
-          pageLength = 25,
-          lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
-          keys = TRUE,
-          dom = "Bftip",
-          buttons = list(
-            'pageLength',
-            list(
-              extend = 'collection',
-              text = 'Reset sorting',
-              action = JS(resetTable)
-            ),
-            list(extend = 'excel',
-                 text = 'Export to Excel')
-          ),
-          columnDefs = list(list(
-            visible = FALSE,
-            targets = c(
-              # Incomings
-              # First name
-              2,
-              # Email
-              3,
-              # 2nd Major
-              7,
-              # Degree
-              8,
-              # University
-              10,
-              # University free text
-              11,
-              # Communication Language
-              12,
-              # Hobby 1
-              13,
-              # Hobby 2
-              14,
-              # Hobby 3
-              15,
-              # Pre-Course
-              17,
-              # Inform Buddy
-              19,
-              # Comments
-              20,
-              # Tuebinger
-              # First name
-              22,
-              # Email
-              23,
-              # 2nd Major
-              27,
-              # Degree
-              28,
-              # University
-              30,
-              # University free text
-              31,
-              # Hobby 1
-              32,
-              # Hobby 2
-              33,
-              # Hobby 3
-              34,
-              # 2 Buddies
-              36,
-              # Inform Buddy
-              39,
-              # Comments
-              40
-            )
-          ))
-        ),
-        fillContainer = TRUE,
-        extensions = c('Buttons', 'KeyTable'),
-        plugins = 'natural',
-        colnames = c(
-          'Last name',
-          'First name',
-          'Email',
-          'Age',
-          'Gender',
-          'Major',
-          '2nd Major',
-          'Degree',
-          'Country',
-          'University',
-          'University free text',
-          'Communication Language',
-          'Hobby 1',
-          'Hobby 2',
-          'Hobby 3',
-          'Languages',
-          'Pre-Course',
-          'Arrival',
-          'Inform Buddy',
-          'Comments',
-          'Last name',
-          'First name',
-          'Email',
-          'Age',
-          'Gender',
-          'Major',
-          '2nd Major',
-          'Degree',
-          'Country',
-          'University',
-          'University free text',
-          'Hobby 1',
-          'Hobby 2',
-          'Hobby 3',
-          'Languages',
-          '2 Buddies',
-          'Available',
-          'ECTS',
-          'Inform Buddy',
-          'Comments'
-        )
-      )
-    remove_modal_spinner()
-    output$table_results <- renderDT(table_results_df)
-    addClass(selector = "body", class = "sidebar-collapse")
+    output$table_results <-
+      renderDT(matching_table(file_incomings()$datapath, file_tuebinger()$datapath))
   })
 }
 
