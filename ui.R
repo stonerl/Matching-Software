@@ -1,24 +1,5 @@
-library(shiny)
-library(shinybusy)
-library(shinyFiles)
-library(shinydashboard)
-library(shinyjs)
-library(tools)
-library(DT)
-library(data.table)
-library(xlsx)
-library(dplyr)
-
-source('matching_algorithm.R')
-source('matching_table.R')
-
-filetypes <-
-  c(
-    '.xlsx',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    '.csv',
-    'text/csv'
-  )
+source('helpers.R')
+source('libraries.R')
 
 ui <- dashboardPage(
   dashboardHeader(title = 'Buddy-Matching'),
@@ -60,28 +41,3 @@ ui <- dashboardPage(
     DTOutput('table_results', height = "90vh")
   )
 )
-
-server <- function(input, output, session) {
-  file_incomings <- reactive(input$file_incomings)
-  file_tuebinger <- reactive(input$file_tuebinger)
-  file_matching <- reactive(input$file_matching)
-  
-  observeEvent(list(file_incomings(), file_tuebinger()), {
-    req(file_incomings())
-    req(file_tuebinger())
-    enable('start_matching')
-  })
-  
-  observeEvent(file_matching(), {
-    req(file_matching())
-    output$table_results <-
-      renderDT(matching_table(file_matching()$datapath, NULL))
-  })
-  
-  observeEvent(input$start_matching, {
-    output$table_results <-
-      renderDT(matching_table(file_incomings()$datapath, file_tuebinger()$datapath))
-  })
-}
-
-shinyApp(ui, server)
