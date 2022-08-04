@@ -93,6 +93,7 @@ matching_programm <-
                      NA,
                      NA,
                      NA,
+                     NA,
                      NA)
     
     spalten_excel <- c(2,

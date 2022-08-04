@@ -33,7 +33,6 @@ matching_table <- function(file_1, file_2) {
       setDT(table_results)
       
       setorder(table_results,
-               ECTS,
                na.last = FALSE)
       
       Sys.sleep(3)
@@ -54,11 +53,8 @@ matching_table <- function(file_1, file_2) {
       
       setDT(table_results)
       
-      setorder(
-        table_results,
-        Would.you.like.to.receive.ECTS.credit.points.for.the.Studium.Professionale..Key.Qualifications...Intercultural.Competency....,
-        na.last = FALSE
-      )
+      setorder(table_results,
+               na.last = FALSE)
     }
     
     table_results <-
@@ -66,7 +62,7 @@ matching_table <- function(file_1, file_2) {
         table_results,
         options = list(
           pageLength = 25,
-          lengthMenu = list(c(10, 25, 50, 75, 100,-1), c(10, 25, 50, 75, 100, 'All')),
+          lengthMenu = list(c(10, 25, 50, 75, 100, -1), c(10, 25, 50, 75, 100, 'All')),
           keys = TRUE,
           dom = "Bftip",
           buttons = list(
