@@ -654,7 +654,7 @@ punkte_algorithmus <-
       (land == "India")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      if ((studienfach_tue_2 == "Sinologie / Chinese Studies") &
+      if ((studienfach_tue_2 == "Sinologie // Chinese Studies") &
           (
             land == "China" |
             land == "Taiwan, R.O.C." |
@@ -1234,7 +1234,7 @@ berg_tal <- function(fakultaet1, fakultaet2) {
 hobbykategorie_funktion <-
   function(hobby_in, hobbies_tue, hobbies_in, h)
   {
-    Hobbies = c("Creativity", "Culture", "Media", "Music", "Other", "Sports")
+    Hobbies = c("Creativity", "Culture", "Media", "Music", "Sports")
     for (hobby in Hobbies) {
       if (startsWith(toString(hobby_in), hobby) &
           ((
