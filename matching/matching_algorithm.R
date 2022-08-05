@@ -884,9 +884,9 @@ punkte_algorithmus <-
     
     # Sprachen werden aus Tabelle in Vektor uebertragen
     sprachen_tuebingen <-
-      strsplit(toString(tuebingen[[Spalte_Sprachen_Tuebingen]]), ";")
+      strsplit(toString(tuebingen[[Spalte_Sprachen_Tuebingen]]), ",")
     sprachen_incoming <-
-      strsplit(toString(incoming[[Spalte_Sprache_Incoming]]), ";")
+      strsplit(toString(incoming[[Spalte_Sprache_Incoming]]), ",")
     #Anzahl der gesprochenen Sprachen werden gezaehlt
     anzahl_sprachen_tuebingen <- length(sprachen_tuebingen[[1]])
     anzahl_sprachen_incoming <- length(sprachen_incoming[[1]])
@@ -907,10 +907,10 @@ punkte_algorithmus <-
     #------------------------------------------------------------------------------
     
     if (is.na(tuebingen[[Spalte_Datum_Tuebingen]])) {
-      tuebingen[[Spalte_Datum_Tuebingen]] = "01.01.01"
+      tuebingen[[Spalte_Datum_Tuebingen]] = "01.01.2001"
     }
     if (is.na(incoming[[Spalte_Datum_Incoming]])) {
-      incoming[[Spalte_Datum_Incoming]] = "01.01.01"
+      incoming[[Spalte_Datum_Incoming]] = "01.01.2001"
     }
     
     # Je groeßer die Zahl, umso mehr Tage ist der Buddy alleine in Tuebingen
