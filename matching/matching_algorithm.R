@@ -173,7 +173,7 @@ matching_programm <-
     } else {
       stop("Falsches Dateifromat")
     }
-
+    
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
     Spalte_2_Buddys = c(16)
     
@@ -454,8 +454,10 @@ punkte_algorithmus <-
         (land == "South Korea")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    if ((studienfach_tue == "Indologie // Indology") &
-        (land == "India")) {
+    if ((
+      studienfach_tue == "Indologie und South Asian Studies // Indology and South Asian Studies"
+    ) &
+    (land == "India")) {
       score <- score + Land_Studiengang_Gewichtung
     }
     if ((studienfach_tue == "Sinologie // Chinese Studies") &
@@ -467,16 +469,19 @@ punkte_algorithmus <-
         )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    if ((studienfach_tue == "American Studies") & (land == "USA")) {
+    if ((studienfach_tue == "American Studies") &
+        (land == "United States of America")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    # if((studienfach_tue == "Anglistik // English Studies" | studienfach_tue == "Englisch // English language" | studienfach_tue == "English Linguistics")
-    #   & (land == "United Kingdom" | land == "Ireland" | land == "Australia" | land == "New Zealand")){
-    # score <- score + Land_Studiengang_Gewichtung
-    #}
     
-    if ((studienfach_tue == "Anglistik // English Studies")
-        & (land == "United Kingdom" | land == "Ireland")) {
+    if ((studienfach_tue == "Anglistik // English Studies") &
+        (
+          land == "United Kingdom" |
+          land == "Ireland" |
+          land == "Australia" |
+          land == "New Zealand" |
+          land == "United States of America"
+        )) {
       score <- score + Land_Studiengang_Gewichtung
     }
     
@@ -484,7 +489,8 @@ punkte_algorithmus <-
         (
           land == "Denmark" |
           land == "Sweden" |
-          land == "Norway" | land == "Finland" | land == "Iceland"
+          land == "Norway" |
+          land == "Finland" | land == "Iceland"
         )) {
       score <- score + Land_Studiengang_Gewichtung
     }
@@ -511,21 +517,25 @@ punkte_algorithmus <-
     
     if ((
       studienfach_tue == "Romanistik // Romance Language and Literature" |
-      studienfach_tue == "Franzoesisch // French Language"
-      |
-      studienfach_tue == "Interkulturelle Deutsch-Franzoesische Studien // Intercultural German-French Studies"
-      |
+      studienfach_tue == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies"
+    ) &
+    (land == "France" |
+     land == "Belgien" |
+     land == "Senegal")) {
+      score <- score + Land_Studiengang_Gewichtung
+    }
+    
+    if ((
+      studienfach_tue == "Romanistik // Romance Language and Literature" |
       studienfach_tue == "Italienisch // Italian Language" |
-      studienfach_tue == "Portugiesisch // Portuguese Language"
-      | studienfach_tue == "Spanisch // Spanish Language"
+      studienfach_tue == "Portugiesisch // Portuguese Language" |
+      studienfach_tue == "Spanisch // Spanish Language"
     ) &
     (
-      land == "France" |
       land == "Italy" |
       land == "Portugal" |
       land == "Spain" |
-      land == "Argentina" | land == "Brazil" | land == "Chile"
-      |
+      land == "Argentina" | land == "Brazil" | land == "Chile" |
       land == "Colombia" |
       land == "Ecuador" |
       land == "Mexico" | land == "Peru" | land == "Uruguay"
@@ -638,8 +648,10 @@ punkte_algorithmus <-
           (land == "South Korea")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      if ((studienfach_tue_2 == "Indologie // Indology") &
-          (land == "India")) {
+      if ((
+        studienfach_tue_2 == "Indologie und South Asian Studies // Indology and South Asian Studies"
+      ) &
+      (land == "India")) {
         score <- score + Land_Studiengang_Gewichtung
       }
       if ((studienfach_tue_2 == "Sinologie / Chinese Studies") &
@@ -652,17 +664,22 @@ punkte_algorithmus <-
         score <- score + Land_Studiengang_Gewichtung
       }
       if ((studienfach_tue_2 == "American Studies") &
-          (land == "USA")) {
+          (land == "United States of America")) {
         score <- score + Land_Studiengang_Gewichtung
       }
       
-      # if((studienfach_tue_2 == "Anglistik // English Studies" | studienfach_tue_2 == "Englisch // English language" | studienfach_tue_2 == "English Linguistics")
-      #   & (land == "United Kingdom" | land == "Ireland" | land == "Australia" | land == "New Zealand")){
-      # score <- score + Land_Studiengang_Gewichtung
-      #}
-      
-      if ((studienfach_tue == "Anglistik // English Studies")
-          & (land == "United Kingdom" | land == "Ireland")) {
+      if ((
+        studienfach_tue_2 == "Anglistik // English Studies" |
+        studienfach_tue_2 == "Englisch // English language" |
+        studienfach_tue_2 == "English Linguistics"
+      )
+      &
+      (
+        land == "United Kingdom" |
+        land == "Ireland" |
+        land == "Australia" |
+        land == "New Zealand" | land == "United States of America"
+      )) {
         score <- score + Land_Studiengang_Gewichtung
       }
       
@@ -670,7 +687,8 @@ punkte_algorithmus <-
           (
             land == "Denmark" |
             land == "Sweden" |
-            land == "Norway" | land == "Finland" | land == "Iceland"
+            land == "Norway" |
+            land == "Finland" | land == "Iceland"
           )) {
         score <- score + Land_Studiengang_Gewichtung
       }
@@ -697,21 +715,26 @@ punkte_algorithmus <-
       
       if ((
         studienfach_tue_2 == "Romanistik // Romance Language and Literature" |
-        studienfach_tue_2 == "Franzoesisch // French Language"
-        |
-        studienfach_tue_2 == "Interkulturelle Deutsch-Franzoesische Studien // Intercultural German-French Studies"
-        |
+        studienfach_tue_2 == "Franzoesisch // French Language" |
+        studienfach_tue_2 == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies"
+      ) &
+      (land == "France" |
+       land == "Belgien" |
+       land == "Senegal")) {
+        score <- score + Land_Studiengang_Gewichtung
+      }
+      
+      if ((
+        studienfach_tue_2 == "Romanistik // Romance Language and Literature" |
         studienfach_tue_2 == "Italienisch // Italian Language" |
-        studienfach_tue_2 == "Portugiesisch // Portuguese Language"
-        | studienfach_tue_2 == "Spanisch // Spanish Language"
+        studienfach_tue_2 == "Portugiesisch // Portuguese Language" |
+        studienfach_tue_2 == "Spanisch // Spanish Language"
       ) &
       (
-        land == "France" |
         land == "Italy" |
         land == "Portugal" |
         land == "Spain" |
-        land == "Argentina" | land == "Brazil" | land == "Chile"
-        |
+        land == "Argentina" | land == "Brazil" | land == "Chile" |
         land == "Colombia" |
         land == "Ecuador" |
         land == "Mexico" | land == "Peru" | land == "Uruguay"
@@ -916,8 +939,8 @@ punkte_algorithmus <-
       incoming[Spalte_Studienabschluss_Incoming] = "none"
     }
     
-    if (tuebingen[Spalte_Studienabschluss_Tuebingen] == "Doktorand/in // PhD Student?" &
-        incoming[Spalte_Studienabschluss_Incoming] == "PhD Student?") {
+    if (tuebingen[Spalte_Studienabschluss_Tuebingen] == "Doktorand/in // PhD Student" &
+        incoming[Spalte_Studienabschluss_Incoming] == "Doktorand/in // PhD Student") {
       score <-
         score + StudienabschlussPhD_Gewichtung #falls beide PhD, so werden Punkte vergeben
     }
@@ -936,16 +959,16 @@ punkte_algorithmus <-
 studiengang_funktion <- function(studiengang) {
   if (is.na(studiengang)) {
     return(c(NA, NA))
-  } else
-    
+  } else {
     F1 = "Evangelisch-Theologische Fakultaet"
-  F2 = "Katholisch-Theologische Fakultaet"
-  F3 = "Juristische Fakultaet"
-  F4 = "Medizinische Fakultaet"
-  F5 = "Philosophische Fakultaet"
-  F6 = "Wirtschafts- und Sozialwissenschaftliche Fakultaet"
-  F7 = "Mathematisch-Naturwissenschaftliche Fakultaet"
-  F8 = "Zentrum fuer Islamische Theologie"
+    F2 = "Katholisch-Theologische Fakultaet"
+    F3 = "Juristische Fakultaet"
+    F4 = "Medizinische Fakultaet"
+    F5 = "Philosophische Fakultaet"
+    F6 = "Wirtschafts- und Sozialwissenschaftliche Fakultaet"
+    F7 = "Mathematisch-Naturwissenschaftliche Fakultaet"
+    F8 = "Zentrum fuer Islamische Theologie"
+  }
   
   #------------------------------------------------------------------
   # FAKULTaeT 1: EVANGELISCH-THEOLOGISCHE FAKULTaeT
@@ -977,23 +1000,14 @@ studiengang_funktion <- function(studiengang) {
   #------------------------------------------------------------------
   
   else if (studiengang == "Biomedical Technologies" |
-           studiengang == "Medizin // Medicine"
-           |
+           studiengang == "Medizin // Medicine" |
            studiengang == "Medizin - Biotechnologie // Medicine - Biotechnology" |
-           studiengang == "Medizintechnik // Medical Technology"
-           |
+           studiengang == "Medizintechnik // Medical Technology" |
            studiengang == "Molekulare Medizin // Molecular Medicine" |
-           studiengang == "Neuro- und Verhaltenswissenschaft // Neuro- and Behavioral Science"
-           |
+           studiengang == "Neuro- und Verhaltenswissenschaft // Neuro- and Behavioral Science" |
            studiengang == "Zahnmedizin // Dentistry" |
-           studiengang == "Zellulaere und Molekulare Neurowissenschaften // Cellular and Molecular Neuroscience"
-           |
-           studiengang == "Experimentelle Medizin // Experimental Medicine (PhD)" |
-           studiengang == "Hebammenwissenschaft // Midwifery"
-           |
-           studiengang == "Medizinische Strahlenwissenschaften // Medical Radiation Sciences"
-           |
-           studiengang == "Neuronale Informationsverarbeitung // Neural Information Processing" |
+           studiengang == "Zellulaere und Molekulare Neurowissenschaften // Cellular and Molecular Neuroscience" |
+           studiengang == "Hebammenwissenschaft // Midwifery" |
            studiengang == "Pflege // Nursing") {
     return(c("Medizin", F4))
   }
@@ -1002,43 +1016,32 @@ studiengang_funktion <- function(studiengang) {
   #FAKULTaeT 5: PHILOSOPHISCHE FAKULTaeT
   #------------------------------------------------------------------
   
-  else if (studiengang == "aegyptologie / Egyptology" |
-           studiengang == "Archaeologie des Mittelalters // Archaeology of the Middle Ages"
-           |
-           studiengang == "IANES Vorderasiatische Archaeologie // Near Eastern Archaeology" |
-           studiengang == "Klassische Archaeologie // Classical Archaeology"
-           |
+  else if (studiengang == "Ägyptologie // Egyptology" |
+           studiengang == "Archaeologie des Mittelalters // Archaeology of the Middle Ages" |
+           studiengang == "Vorderasiatische Archäologie // Near Eastern Archaeology" |
+           studiengang == "Klassische Archaeologie // Classical Archaeology" |
            studiengang == "Klassische Philologie // Classical Philology" |
-           studiengang == "Kunstgeschichte // Art History"
-           |
+           studiengang == "Kunstgeschichte // Art History" |
            studiengang == "Musikwissenschaft // Music" |
-           studiengang == "Naturwissenschaftliche Archaeologie // Scientific Archaeology"
-           |
+           studiengang == "Naturwissenschaftliche Archaeologie // Scientific Archaeology" |
            studiengang == "Religionswissenschaft // Religious Studies" |
-           studiengang == "Ur- und Fruehgeschichte // Prehistory"
-           |
-           studiengang == "Ur- und Fruehgeschichtliche Archaeologie // Prehistorical Archaeology" |
-           studiengang == "Vorderasiatische Archaeologie // Near Eastern Archaeology"
-           |
+           studiengang == "Ur- und Frühgeschichte // Prehistory" |
+           studiengang == "Ur- und Frühgeschichtliche Archaeologie // Prehistorical Archaeology" |
+           studiengang == "Vorderasiatische Archaeologie // Near Eastern Archaeology" |
            studiengang == "Altorientalische Philologie // Ancient Eastern Philology" |
-           studiengang == "Griechisch // Greek"
-           | studiengang == "Latein // Latin") {
+           studiengang == "Griechisch // Greek" |
+           studiengang == "Latein // Latin") {
     return(c("Altertums- und Kunstwissenschaften", F5))
   }
   
   else if (studiengang == "Ethnologie // Social and Cultural Anthropology" |
-           studiengang == "Indologie // Indology"
-           |
+           studiengang == "Indologie und South Asian Studies // Indology and South Asian Studies" |
            studiengang == "Japanologie // Japanese Studies" |
-           studiengang == "Koreanistik // Korean Studies"
-           |
-           studiengang == "Orient- und Islamwissenschaften // Oriental Studies"
-           |
-           studiengang == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
-           |
-           studiengang == "Sinologie / Chinese Studies"  |
-           studiengang == "Islamwissenschaften // Islamic Studies"
-           |
+           studiengang == "Koreanistik // Korean Studies" |
+           studiengang == "Orient- und Islamwissenschaften // Oriental Studies" |
+           studiengang == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics" |
+           studiengang == "Sinologie // Chinese Studies"  |
+           studiengang == "Islamwissenschaft // Islamic and Middle Eastern Studies" |
            studiengang == "Sprachen, Geschichte und Kulturen des Nahen Ostens // Languages, History and Cultures of the Near East") {
     return(c("Asien-Orient-Wissenschaften", F5))
   }
@@ -1051,33 +1054,17 @@ studiengang_funktion <- function(studiengang) {
   
   else if (studiengang == "American Studies" |
            studiengang == "Anglistik // English Studies" |
-           studiengang == "Germanistik // German Studies"
-           |
+           studiengang == "Germanistik // German Studies" |
            studiengang == "Internationale Literaturen // International Literatures" |
-           studiengang == "Romanistik // Romance Language and Literature"
-           |
+           studiengang == "Romanistik // Romance Language and Literature" |
            studiengang == "Skandinavistik // Scandinavian Studies" |
-           studiengang == "Slavistik // Slavic Studies"
-           |
+           studiengang == "Slavistik // Slavic Studies" |
            studiengang == "Cultures of the Global South" |
-           studiengang == "Deutsch als Zweitsprache: Sprachdiagnostik und Sprachfoerderung // German as a Foreign Language: Linguistic Assessment and Language Support"
-           |
-           studiengang == "Deutsch // German Language" |
-           studiengang == "Deutsche Literatur // German Literature" |
-           studiengang == "Englisch // English Language"
-           |
-           studiengang == "English Linguistics" |
-           studiengang == "Franzoesisch // French Language" |
-           studiengang == "Interkulturelle Deutsch-Franzoesische Studien // Intercultural German-French Studies"
-           |
-           studiengang == "Italienisch // Italian Language" |
-           studiengang == "Lateinamerikastudien // Latin American Studies"
-           |
+           studiengang == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies" |
+           studiengang == "Lateinamerikastudien // Latin American Studies" |
            studiengang == "Literatur- und Kulturtheorie // Literary and Cultural Theory" |
-           studiengang == "Portugiesisch // Portuguese Language"
-           |
-           studiengang == "Russisch // Russian Language" |
-           studiengang == "Spanisch // Spanish Language") {
+           studiengang == "Portugiesisch // Portuguese Language" |
+           studiengang == "Russisch // Russian Language") {
     return(c("Neuphilologie", F5))
   }
   
@@ -1094,48 +1081,36 @@ studiengang_funktion <- function(studiengang) {
   #FAKULTaeT 6: WIRTSCHAFTS- UND SOZIALWISSENSCHAFTLICHE FAKULTaeT
   #------------------------------------------------------------------
   
-  else if (studiengang == "Empirische Bildungsforschung und Paedagogische Psychologie // Empirical Educational Research"
-           |
+  else if (studiengang == "Empirische Bildungsforschung und Pädagogische Psychologie // Empirical Educational Research " |
            studiengang == "Empirische Kulturwissenschaft // Empirical Cultural Studies" |
-           studiengang == "Erwachsenenbildung // Adult Education"
-           |
+           studiengang == "Erwachsenenbildung // Adult Education" |
            studiengang == "Erziehungswissenschaft // Educational Science" |
-           studiengang == "Politikwissenschaft // Political Science"
-           |
-           studiengang == "Friedensforschung und Internationale Politik // Peace Studies and International Politics"
-           |
-           studiengang == "Schulforschung und Schulentwicklung // Educational Research & Development/Social Work"
-           |
-           studiengang == "Sozialpaedagogik // Educational Science" |
-           studiengang == "Soziologie // Sociology"
-           |
+           studiengang == "Politikwissenschaft // Political Science"  |
+           studiengang == "Friedensforschung und Internationale Politik // Peace Studies and International Politics" |
+           studiengang == "Schulforschung und Schulentwicklung // Educational Research & Development/Social Work" |
+           studiengang == "Sozialpädagogik // Educational Science" |
+           studiengang == "Soziologie // Sociology" |
            studiengang == "Sportwissenschaft // Sports Science" |
-           studiengang == "Comparative + Middle East Politics and Society (CMEPS)"
-           | studiengang == "Bildungswissenschaften // Teaching"
-           |
+           studiengang == "Comparative + Middle East Politics and Society" |
+           studiengang == "Bildungswissenschaften // Teaching" |
            studiengang == "Demokratie und Regieren in Europa // Democracy and Governance in Europe") {
     return(c("Sozialwissenschaften", F7))
   }
   
   else if (studiengang == "Accounting and Finance (M.Sc.)" |
            studiengang == "Business Administration" |
-           studiengang == "Economics"
-           |
+           studiengang == "Economics" |
+           studiengang == "Economics and Business Administration" |
+           studiengang == "Economics and Finance" |
            studiengang == "European Economics (M.Sc.)" |
            studiengang == "European Management (M.Sc.)" |
-           studiengang == "General Management (M.Sc.)"
-           |
+           studiengang == "General Management (M.Sc.)" |
            studiengang == "Management & Economics (M.Sc.)" |
-           studiengang == "International Business (M.Sc.)"
-           |
+           studiengang == "International Business (M.Sc.)" |
            studiengang == "International Business Administration (BA)" |
-           studiengang == "International Economics (BA)"
-           |
+           studiengang == "International Economics (BA)" |
            studiengang == "International Economics (M.Sc.)" |
-           studiengang == "Data Science in Business and Economics"
-           |
-           studiengang == "Economics and Business Administration" |
-           studiengang == "Economics and Finance") {
+           studiengang == "Data Science in Business and Economics") {
     return(c("Wirtschaftswisschenschaften", F6))
   }
   
@@ -1145,29 +1120,25 @@ studiengang_funktion <- function(studiengang) {
   
   
   else if (studiengang == "Biochemie // Biochemistry" |
-           studiengang == "Pharmaceutical Sciences and Technologies"
-           | studiengang == "Pharmazie // Pharmacy") {
+           studiengang == "Pharmaceutical Sciences and Technologies" |
+           studiengang == "Pharmazie // Pharmacy") {
     return(c("Pharmazie und Biochemie", F7))
   }
   
   else if (studiengang == "Bioinformatik // Bioinformatics" |
-           studiengang == "Informatik // Computer Science"
-           |
+           studiengang == "Informatik // Computer Science" |
            studiengang == "Kognitionswissenschaft // Cognition Science" |
-           studiengang == "Medieninformatik // Media Informatics"
-           |
+           studiengang == "Medieninformatik // Media Informatics" |
            studiengang == "Machine Learning" |
            studiengang == "Medizininformatik // Medical Informatics") {
     return(c("Informatik", F7))
   }
   
   else if (studiengang == "Biologie // Biology" |
-           studiengang == "Nano-Science"
-           |
-           studiengang == "Evolution und oekologie // Evolution and Ecology" |
-           studiengang == "Mikrobiologie // Microbiology"
-           | studiengang == "Neurobiologie // Neurobiology"
-           |
+           studiengang == "Nano-Science" |
+           studiengang == "Sozialpädagogik Evolution und Ökologie // Evolution and Ecology// Educational Science" |
+           studiengang == "Mikrobiologie // Microbiology" |
+           studiengang == "Neurobiologie // Neurobiology" |
            studiengang == "Molekulare Zellbiologie und Immunologie // Molecular Cell Biology and Immunology") {
     return(c("Biologie", F7))
   }
@@ -1178,17 +1149,11 @@ studiengang_funktion <- function(studiengang) {
   
   else if (studiengang == "Geographie // Geography" |
            studiengang == "Geologie // Geology" |
-           studiengang == "Geooekologie // Geoecology"
-           |
-           studiengang == "Palaeoanthropologie // Palaeoanthropology" |
-           studiengang == "Umweltwissenschaften // Environmental Science"
-           |
+           studiengang == "Geoökologie // Geoecology" |
+           studiengang == "Paläoanthropologie // Palaeoanthropology" |
+           studiengang == "Umweltwissenschaften // Environmental Science" |
            studiengang == "Humangeographie // Global Studies" |
-           studiengang == "Applied + Environmental Geoscience AEG"
-           | studiengang == "Geowissenschaften // Geosciences"
-           |
-           studiengang == "Physische Geographie - Umweltgeographie // Physical Geography - Environmental Geography"
-           |
+           studiengang == "Applied + Environmental Geoscience AEG" |
            studiengang == "Archaeological Sciences and Human Evolution") {
     return(c("Geowissenschaften", F7))
   }
@@ -1199,8 +1164,7 @@ studiengang_funktion <- function(studiengang) {
   
   else if (studiengang == "Physik // Physics" |
            studiengang == "Mathematical Physics" |
-           studiengang == "Naturwissenschaft und Technik // Natural Sciences and Technology"
-           |
+           studiengang == "Naturwissenschaft und Technik // Natural Sciences and Technology" |
            studiengang == "Astro and Particle Physics" |
            studiengang == "Astronomie // Astronomy") {
     return(c("Physik", F7))
@@ -1215,8 +1179,7 @@ studiengang_funktion <- function(studiengang) {
   # FAKULTaeT 8: ZENTRUM FueR ISLAMISCHE THEOLOGIE
   #------------------------------------------------------------------
   
-  else if (studiengang == "Islamische Theologie // Islamic Theology" |
-           studiengang == "Islamische Religionslehre // Islamic Religious Education") {
+  else if (studiengang == "Islamische Theologie // Islamic Theology") {
     return(c("Isl. Theologie", F8))
   }
   
@@ -1271,7 +1234,7 @@ berg_tal <- function(fakultaet1, fakultaet2) {
 hobbykategorie_funktion <-
   function(hobby_in, hobbies_tue, hobbies_in, h)
   {
-    Hobbies = c("Creativity", "Culture", "Media", "Music", "Sports")
+    Hobbies = c("Creativity", "Culture", "Media", "Music", "Other", "Sports")
     for (hobby in Hobbies) {
       if (startsWith(toString(hobby_in), hobby) &
           ((
