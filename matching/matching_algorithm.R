@@ -446,12 +446,18 @@ punkte_algorithmus <-
     
     land = incoming[Spalte_Land_Incoming]
     
-    if ((studienfach_tue == "Japanologie // Japanese Studies") &
-        (land == "Japan")) {
+    if ((
+      studienfach_tue == "Japanologie // Japanese Studies" |
+      studienfach_tue == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+    ) &
+    (land == "Japan")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    if ((studienfach_tue == "Koreanistik // Korean Studies") &
-        (land == "South Korea")) {
+    if ((
+      studienfach_tue == "Koreanistik // Korean Studies" |
+      studienfach_tue == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+    ) &
+    (land == "South Korea")) {
       score <- score + Land_Studiengang_Gewichtung
     }
     if ((
@@ -460,13 +466,16 @@ punkte_algorithmus <-
     (land == "India")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    if ((studienfach_tue == "Sinologie // Chinese Studies") &
-        (
-          land == "China" |
-          land == "Taiwan, R.O.C." |
-          land == "Hong Kong, SAR" |
-          land == "Singapore" | land == "Macau"
-        )) {
+    if ((
+      studienfach_tue == "Sinologie // Chinese Studies" |
+      studienfach_tue == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+    ) &
+    (
+      land == "China" |
+      land == "Taiwan, R.O.C." |
+      land == "Hong Kong, SAR" |
+      land == "Singapore" | land == "Macau"
+    )) {
       score <- score + Land_Studiengang_Gewichtung
     }
     if ((studienfach_tue == "American Studies") &
@@ -497,7 +506,7 @@ punkte_algorithmus <-
     
     if ((
       studienfach_tue == "Slavistik // Slavic Studies" |
-      studienfach_tue == "Russisch // Russian Language"
+      studienfach_tue == "Russisch // Russian"
     ) &
     (
       land == "Latvia" |
@@ -517,7 +526,8 @@ punkte_algorithmus <-
     
     if ((
       studienfach_tue == "Romanistik // Romance Language and Literature" |
-      studienfach_tue == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies"
+      studienfach_tue == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies" |
+      studienfach_tue == "Französisch // French Language"
     ) &
     (land == "France" |
      land == "Belgien" |
@@ -640,12 +650,18 @@ punkte_algorithmus <-
       }
       
       
-      if ((studienfach_tue_2 == "Japanologie // Japanese Studies") &
-          (land == "Japan")) {
+      if ((
+        studienfach_tue_2 == "Japanologie // Japanese Studies" |
+        studienfach_tue_2 == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+      ) &
+      (land == "Japan")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      if ((studienfach_tue_2 == "Koreanistik // Korean Studies") &
-          (land == "South Korea")) {
+      if ((
+        studienfach_tue_2 == "Koreanistik // Korean Studies" |
+        studienfach_tue_2 == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+      ) &
+      (land == "South Korea")) {
         score <- score + Land_Studiengang_Gewichtung
       }
       if ((
@@ -654,13 +670,16 @@ punkte_algorithmus <-
       (land == "India")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      if ((studienfach_tue_2 == "Sinologie // Chinese Studies") &
-          (
-            land == "China" |
-            land == "Taiwan, R.O.C." |
-            land == "Hong Kong, SAR" |
-            land == "Singapore" | land == "Macau"
-          )) {
+      if ((
+        studienfach_tue_2 == "Sinologie // Chinese Studies" |
+        studienfach_tue_2 == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
+      ) &
+      (
+        land == "China" |
+        land == "Taiwan, R.O.C." |
+        land == "Hong Kong, SAR" |
+        land == "Singapore" | land == "Macau"
+      )) {
         score <- score + Land_Studiengang_Gewichtung
       }
       if ((studienfach_tue_2 == "American Studies") &
@@ -695,7 +714,7 @@ punkte_algorithmus <-
       
       if ((
         studienfach_tue_2 == "Slavistik // Slavic Studies" |
-        studienfach_tue_2 == "Russisch // Russian Language"
+        studienfach_tue_2 == "Russisch // Russian"
       ) &
       (
         land == "Latvia" |
@@ -715,7 +734,7 @@ punkte_algorithmus <-
       
       if ((
         studienfach_tue_2 == "Romanistik // Romance Language and Literature" |
-        studienfach_tue_2 == "Franzoesisch // French Language" |
+        studienfach_tue_2 == "Französisch // French Language" |
         studienfach_tue_2 == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies"
       ) &
       (land == "France" |
@@ -1008,7 +1027,7 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Zahnmedizin // Dentistry" |
            studiengang == "Zellulaere und Molekulare Neurowissenschaften // Cellular and Molecular Neuroscience" |
            studiengang == "Hebammenwissenschaft // Midwifery" |
-           studiengang == "Pflege // Nursing") {
+           studiengang == "Pflege // Nursery") {
     return(c("Medizin", F4))
   }
   
@@ -1017,16 +1036,16 @@ studiengang_funktion <- function(studiengang) {
   #------------------------------------------------------------------
   
   else if (studiengang == "Ägyptologie // Egyptology" |
-           studiengang == "Archaeologie des Mittelalters // Archaeology of the Middle Ages" |
+           studiengang == "Archäologie des Mittelalters // Archaeology of the Middle Ages" |
            studiengang == "Vorderasiatische Archäologie // Near Eastern Archaeology" |
-           studiengang == "Klassische Archaeologie // Classical Archaeology" |
+           studiengang == "Klassische Archäologie // Classical Archaeology" |
            studiengang == "Klassische Philologie // Classical Philology" |
            studiengang == "Kunstgeschichte // Art History" |
            studiengang == "Musikwissenschaft // Music" |
-           studiengang == "Naturwissenschaftliche Archaeologie // Scientific Archaeology" |
+           studiengang == "Naturwissenschaftliche Archäologie // Scientific Archaeology" |
            studiengang == "Religionswissenschaft // Religious Studies" |
            studiengang == "Ur- und Frühgeschichte // Prehistory" |
-           studiengang == "Ur- und Frühgeschichtliche Archaeologie // Prehistorical Archaeology" |
+           studiengang == "Ur- und Frühgeschichtliche Archäologie // Prehistorical Archaeology" |
            studiengang == "Vorderasiatische Archaeologie // Near Eastern Archaeology" |
            studiengang == "Altorientalische Philologie // Ancient Eastern Philology" |
            studiengang == "Griechisch // Greek" |
@@ -1040,7 +1059,7 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Koreanistik // Korean Studies" |
            studiengang == "Orient- und Islamwissenschaften // Oriental Studies" |
            studiengang == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics" |
-           studiengang == "Sinologie // Chinese Studies"  |
+           studiengang == "Sinologie // Chinese Studies" |
            studiengang == "Islamwissenschaft // Islamic and Middle Eastern Studies" |
            studiengang == "Sprachen, Geschichte und Kulturen des Nahen Ostens // Languages, History and Cultures of the Near East") {
     return(c("Asien-Orient-Wissenschaften", F5))
@@ -1064,7 +1083,12 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Lateinamerikastudien // Latin American Studies" |
            studiengang == "Literatur- und Kulturtheorie // Literary and Cultural Theory" |
            studiengang == "Portugiesisch // Portuguese Language" |
-           studiengang == "Russisch // Russian Language") {
+           studiengang == "Russisch // Russian" |
+           studiengang == "Italienisch // Italian Language" |
+           studiengang == "Portugiesisch // Portuguese Language" |
+           studiengang == "Spanisch // Spanish Language" | 
+           studiengang == "Französisch // French Language" |
+           studiengang == "Literaturwissenschaften // Literature") {
     return(c("Neuphilologie", F5))
   }
   
@@ -1093,7 +1117,10 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Sportwissenschaft // Sports Science" |
            studiengang == "Comparative + Middle East Politics and Society" |
            studiengang == "Bildungswissenschaften // Teaching" |
-           studiengang == "Demokratie und Regieren in Europa // Democracy and Governance in Europe") {
+           studiengang == "Demokratie und Regieren in Europa // Democracy and Governance in Europe" |
+           studiengang == "Master of Public Policy and Social Change" |
+           studiengang == "Quantitative Data Science Methods – Psychometrics, Econometrics and Machine Learning" |
+           studiengang == "Schulmanagement und Leadership // School Management and Leadership") {
     return(c("Sozialwissenschaften", F7))
   }
   
@@ -1136,7 +1163,7 @@ studiengang_funktion <- function(studiengang) {
   
   else if (studiengang == "Biologie // Biology" |
            studiengang == "Nano-Science" |
-           studiengang == "Sozialpädagogik Evolution und Ökologie // Evolution and Ecology// Educational Science" |
+           studiengang == "Evolution und Ökologie // Evolution and Ecology" |
            studiengang == "Mikrobiologie // Microbiology" |
            studiengang == "Neurobiologie // Neurobiology" |
            studiengang == "Molekulare Zellbiologie und Immunologie // Molecular Cell Biology and Immunology") {
@@ -1166,7 +1193,8 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Mathematical Physics" |
            studiengang == "Naturwissenschaft und Technik // Natural Sciences and Technology" |
            studiengang == "Astro and Particle Physics" |
-           studiengang == "Astronomie // Astronomy") {
+           studiengang == "Astronomie // Astronomy" |
+           studiengang == "Advanced Quantum Physics") {
     return(c("Physik", F7))
   }
   
