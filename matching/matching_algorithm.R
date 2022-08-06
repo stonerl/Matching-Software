@@ -370,7 +370,7 @@ punkte_algorithmus <-
     # Definition der Gewichtungsvariablen: wie viele Punkte gibt welche uebereinstimmung #Default
     
     Studienfach_Gewichtung = c(10) #Punktzahl fuer dasselbe Studienfach #20
-    Fachbereich_Gewichtung = c(7) #Punktzahl fuer denselben Fachbereich #15
+    Fachbereich_Gewichtung = c(8) #Punktzahl fuer denselben Fachbereich #15
     Fakultaet_Gewichtung = c(5) #Punktzahl fuer diesselbe Fakultaet #10
     BergTal_Gewichtung = c(1) #Punktzahl wenn beide am Berg oder im Tal studieren #5
     
@@ -386,11 +386,11 @@ punkte_algorithmus <-
     StudienabschlussPhD_Gewichtung = c(30) #Punktzahl falls beide Doktoranden sind
     
     Austauschuni_Gewichtung = c(8) #Punktzahl wenn Tuebinger Auslandssemester an Uni des Incomings gemacht hat #8
-    Austauschland_Gewichtung = c(10) #Punktzahl wenn Tuebinger Auslandssemester in Herkunftsland des Incomings gemacht hat #10
+    Austauschland_Gewichtung = c(12) #Punktzahl wenn Tuebinger Auslandssemester in Herkunftsland des Incomings gemacht hat #10
     
-    Land_Studiengang_Gewichtung = c(10) # Punktzahl wenn Incoming aus Land, das mit Studiengang des Tuebingers zu tun hat, bspw. Korea-Koreanistik
+    Land_Studiengang_Gewichtung = c(12) # Punktzahl wenn Incoming aus Land, das mit Studiengang des Tuebingers zu tun hat, bspw. Korea-Koreanistik
     
-    Sprache_Gewichtung = c(15) #Punktzahl fuer uebereinstimmende Sprache #5
+    Sprache_Gewichtung = c(10) #Punktzahl fuer uebereinstimmende Sprache #5
     
     Ankunftsdatum_0Wochen_Gewichtung = c(12) #Punktzahl falls der Tuebinger vor oder mit dem Incoming ankommt #20
     Ankunftsdatum_2Wochen_Gewichtung = c(6) #Punktzahl falls der Tuebinger bis zu 2 Wochen nach dem Incoming ankommt
