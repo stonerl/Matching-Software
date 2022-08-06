@@ -74,3 +74,7 @@ Temporary Items
 .apdisk
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#macOS
+
+.nova/*
+
+# End of https://mrkandreev.name/snippets/gitignore-generator/#nova
