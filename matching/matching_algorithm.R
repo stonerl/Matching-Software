@@ -5,6 +5,7 @@
 # Anschließend werden Tuebinger und Incomings dann basierend auf diesen Werten mittels des Gale-Shapley Algorithmus' gematched.
 # Dieser wird vom R Paket "matchingR", Copyright Jan Tilly und Nick Janetos, zur Verfuegung gestellt.
 
+library(doParallel)
 library(matchingR)
 library(stringi)
 library(xlsx)
@@ -52,6 +53,12 @@ matching_programm <-
            dir_output_files,
            web_app)
   {
+    # um die Berechnung der Buddy-Paare zu beschleunigen parallelisieren wir  
+    n.cores <- parallel::detectCores() - 1
+    my.cluster <- parallel::makeCluster(n.cores,
+                                        type = "FORK")
+    doParallel::registerDoParallel(cl = my.cluster)
+    
     file_kurzuebersicht   <- "Finalmatch_kurz.csv"
     file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
     
@@ -140,7 +147,7 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_incoming <-
         tabelle_incoming[!apply(is.na(tabelle_incoming) |
-                                  tabelle_incoming == "", 1, all), ]
+                                  tabelle_incoming == "", 1, all),]
     } else {
       stop("Falsches Dateiformat")
     }
@@ -169,9 +176,9 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_tuebingen <-
         tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) |
-                                   tabelle_tuebingen == "", 1, all), ]
+                                   tabelle_tuebingen == "", 1, all),]
     } else {
-      stop("Falsches Dateifromat")
+      stop("Falsches Dateiformat")
     }
     
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
@@ -194,18 +201,15 @@ matching_programm <-
     anzahl_tuebinger = nrow(tabelle_tuebingen)
     
     #hier wird die Punkte-Matrix erstellt, in der die uebereinstimmungspunktzahl aller Buddy-Paare gespeichert werden wird
-    punkte_matrix = matrix(nrow = anzahl_incomings, ncol = anzahl_tuebinger)
-    
     #diese Schleifen iterieren ueber alle Paare von Tuebingern und Incomings
-    for (i in 1:anzahl_incomings) {
-      for (j in 1:anzahl_tuebinger) {
+    punkte_matrix <-
+      foreach(i = 1:anzahl_incomings, .combine = 'rbind') %:%
+      foreach(j = 1:anzahl_tuebinger, .combine = 'c') %dopar% {
         # fuer jedes Paar aus Austauschstudentem und Tuebinger Buddy wird ein Wert berechnet;
         # je hoeher der Wert, umso besser passen die Teilnehmer zusammen
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
-        punkte_matrix[i, j] = punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
-        
+        punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
       }
-    }
     
     matching = galeShapley.marriageMarket(t(punkte_matrix), punkte_matrix)
     
@@ -227,7 +231,7 @@ matching_programm <-
       }
       if (length(deleted_cols) > 0)
         punkte_matrix <-
-          punkte_matrix[,-deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
+          punkte_matrix[, -deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
       
       for (i in 1:anzahl_incomings) {
         if (!(is.na(matching$proposals[i, 1]))) {
@@ -239,7 +243,7 @@ matching_programm <-
       
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
-          punkte_matrix[-deleted_rows,]
+          punkte_matrix[-deleted_rows, ]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
       
       index_matrix <-
@@ -281,10 +285,10 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
-      data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
+      data.frame(list(tabelle_incoming[1, ], tabelle_tuebingen[buddy_matching[1], ]))
     for (k in 2:nrow(buddy_matching)) {
-      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
-      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
+      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k, ]
+      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1], ]
     }
     
     # KURZueBERSICHT
@@ -353,6 +357,7 @@ matching_programm <-
     } else {
       return(as.data.frame(ausfuehrliche_uebersicht))
     }
+    parallel::stopCluster(cl = my.cluster)
   }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
