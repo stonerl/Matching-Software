@@ -1,61 +1,16 @@
-source('matching/matching_algorithm.R')
-
 # ----------------------------------------------------------------------------------------------------------------------
 # FUNCTION MATCHING_TABLE
 #-----------------------------------------------------------------------------------------------------------------------
 
 # This function outputs a datatable, that can then be drawn in the UI.
-#
-# file_1 needs to be a datapath
-# file_2 can either be a datapath or an NULL object
-#
-# If a NULL object is passed we expect that file_1 contains a proper formatted matching result table
+# It expects a dataframe as input.
 
-matching_table <- function(file_1, file_2) {
-  # initialize a NULL object to hold the datatable
-  table_results <- NULL
-  
+matching_table <- function(table_results) {
   tryCatch({
-    if (is.null(file_2)) {
-      show_modal_spinner(spin = 'fading-circle',
-                         color = '#a51e37',
-                         text = 'Loading matching data. Please wait…')
-      
-      table_results <- read.xlsx2(
-        file = file_1,
-        sheetIndex = 1,
-        startRow = 2,
-        header = TRUE,
-        colClasses = NA,
-        as.data.frame = TRUE
-      )
-      
-      setDT(table_results)
-      
-      setorder(table_results,
-               na.last = FALSE)
-      
-      Sys.sleep(3)
-    } else {
-      show_modal_spinner(spin = 'fading-circle',
-                         color = '#a51e37',
-                         text = 'Matching can take up to one hour. Please wait…')
-      
-      table_results <-
-        matching_programm(file_1,
-                          file_2,
-                          FALSE,
-                          TRUE)
-      
-      while (is.null(table_results)) {
-        Sys.sleep(5)
-      }
-      
-      setDT(table_results)
-      
-      setorder(table_results,
-               na.last = FALSE)
-    }
+    setDT(table_results)
+    
+    setorder(table_results,
+             na.last = FALSE)
     
     table_results <-
       datatable(
@@ -179,13 +134,11 @@ matching_table <- function(file_1, file_2) {
           'Comments'
         )
       )
-    addClass(selector = "body", class = "sidebar-collapse")
     return(table_results)
   },
   error = function(err) {
     showNotification(paste0(err),
                      duration = 30,
                      type = 'err')
-  },
-  finally = c(resetButtons(), remove_modal_spinner()))
+  })
 }

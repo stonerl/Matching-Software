@@ -1,5 +1,6 @@
 source('helpers.R')
 source('libraries.R')
+source('matching/matching_algorithm.R')
 source('matching/matching_table.R')
 
 server <- function(input, output, session) {
@@ -13,14 +14,46 @@ server <- function(input, output, session) {
     enable('start_matching')
   })
   
-  observeEvent(file_matching(), {
-    req(file_matching())
-    output$table_results <-
-      renderDT(matching_table(file_matching()$datapath, NULL))
+  observeEvent(input$start_matching, {
+    show_modal_spinner(spin = 'fading-circle',
+                       color = '#a51e37',
+                       text = 'Matching will take several minutes. Please wait…')
+    table_results <-
+      matching_programm(file_incomings()$datapath,
+                        file_tuebinger()$datapath,
+                        FALSE,
+                        TRUE)
+    table_results <-
+      matching_table(table_results)
+    
+    output$table_results <- renderDT(table_results)
+    
+    addClass(selector = "body", class = "sidebar-collapse")
+    remove_modal_spinner()
+    resetButtons()
   })
   
-  observeEvent(input$start_matching, {
-    output$table_results <-
-      renderDT(matching_table(file_incomings()$datapath, file_tuebinger()$datapath))
+  observeEvent(file_matching(), {
+    req(file_matching())
+    show_modal_spinner(spin = 'fading-circle',
+                       color = '#a51e37',
+                       text = 'Loading matching data. Please wait…')
+    
+    table_results <<- matching_table(
+      read.xlsx2(
+        file = file_matching()$datapath,
+        sheetIndex = 1,
+        startRow = 2,
+        header = TRUE,
+        as.data.frame = TRUE
+      )
+    )
+    
+    output$table_results <- renderDT(table_results)
+    
+    addClass(selector = "body", class = "sidebar-collapse")
+    remove_modal_spinner()
+    resetButtons()
   })
+  
 }
