@@ -50,10 +50,10 @@ Spalte_Datum_Incoming = c(18)
 matching_programm <-
   function(file_incoming,
            file_tuebinger,
-           dir_output_files,
-           web_app)
+           dir_output_files = getwd(),
+           web_app = FALSE)
   {
-    # um die Berechnung der Buddy-Paare zu beschleunigen parallelisieren wir  
+    # um die Berechnung der Buddy-Paare zu beschleunigen parallelisieren wir
     n.cores <- parallel::detectCores() - 1
     my.cluster <- parallel::makeCluster(n.cores,
                                         type = "FORK")
@@ -68,14 +68,10 @@ matching_programm <-
     # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
     # wenn FALSE, kommt die Abfrage von der web-app und nichts wird erzeugt
     if (!(web_app)) {
-      if (missingArg(dir_output_files)) {
-        dir_output <- getwd()
+      if (!(stri_sub(dir_output_files, -1) == "/")) {
+        dir_output <- paste(dir_output_files, "/", sep = "")
       } else {
-        if (!(stri_sub(dir_output_files, -1) == "/")) {
-          dir_output <- paste(dir_output_files, "/", sep = "")
-        } else {
-          dir_output <- dir_output_files
-        }
+        dir_output <- dir_output_files
       }
     }
     
@@ -147,7 +143,7 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_incoming <-
         tabelle_incoming[!apply(is.na(tabelle_incoming) |
-                                  tabelle_incoming == "", 1, all),]
+                                  tabelle_incoming == "", 1, all), ]
     } else {
       stop("Falsches Dateiformat")
     }
@@ -176,7 +172,7 @@ matching_programm <-
       # entferne leere Zeilen
       tabelle_tuebingen <-
         tabelle_tuebingen[!apply(is.na(tabelle_tuebingen) |
-                                   tabelle_tuebingen == "", 1, all),]
+                                   tabelle_tuebingen == "", 1, all), ]
     } else {
       stop("Falsches Dateiformat")
     }
@@ -208,7 +204,7 @@ matching_programm <-
         # fuer jedes Paar aus Austauschstudentem und Tuebinger Buddy wird ein Wert berechnet;
         # je hoeher der Wert, umso besser passen die Teilnehmer zusammen
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
-        punkte_algorithmus(tabelle_incoming[i,], tabelle_tuebingen[j,])
+        punkte_algorithmus(tabelle_incoming[i, ], tabelle_tuebingen[j, ])
       }
     
     matching = galeShapley.marriageMarket(t(punkte_matrix), punkte_matrix)
@@ -243,7 +239,7 @@ matching_programm <-
       
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
-          punkte_matrix[-deleted_rows, ]
+          punkte_matrix[-deleted_rows,]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
       
       index_matrix <-
@@ -285,10 +281,10 @@ matching_programm <-
     
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
-      data.frame(list(tabelle_incoming[1, ], tabelle_tuebingen[buddy_matching[1], ]))
+      data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
     for (k in 2:nrow(buddy_matching)) {
-      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k, ]
-      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1], ]
+      ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
+      ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
     }
     
     # KURZueBERSICHT
