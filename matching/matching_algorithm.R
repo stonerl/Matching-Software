@@ -58,13 +58,13 @@ matching_programm <-
     my.cluster <- parallel::makeCluster(n.cores,
                                         type = "FORK")
     doParallel::registerDoParallel(cl = my.cluster)
-    
+
     file_kurzuebersicht   <- "Finalmatch_kurz.csv"
     file_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.csv"
-    
+
     xlsx_kurzuebersicht   <- "Finalmatch_kurz.xlsx"
     xlsx_gesamtuebersicht  <- "Finalmatch_ausfuehrlich.xlsx"
-    
+
     # wenn kein Pfad für die Ausgabedateien angegeben wird, nimm das aktuelle Arbeitsverzeichnis
     # wenn FALSE, kommt die Abfrage von der web-app und nichts wird erzeugt
     if (!(web_app)) {
@@ -74,7 +74,7 @@ matching_programm <-
         dir_output <- dir_output_files
       }
     }
-    
+
     # definiere die Spalten die eingelesen werden sollen
     spalten_csv <- c('NULL',
                      NA,
@@ -98,7 +98,7 @@ matching_programm <-
                      NA,
                      NA,
                      NA)
-    
+
     spalten_excel <- c(2,
                        3,
                        4,
@@ -119,7 +119,7 @@ matching_programm <-
                        20,
                        21,
                        22)
-    
+
     # liest die beiden uebergebenen Tabellen ein
     if (stri_sub(file_incoming, -3) == "csv") {
       tabelle_incoming <-
@@ -147,7 +147,7 @@ matching_programm <-
     } else {
       stop("Falsches Dateiformat")
     }
-    
+
     if (stri_sub(file_tuebinger, -3) == "csv")
     {
       tabelle_tuebingen <-
@@ -176,26 +176,26 @@ matching_programm <-
     } else {
       stop("Falsches Dateiformat")
     }
-    
+
     # gibt die Spalte an, in der steht, ob die Tuebinger bereit waeren, 2 Buddys zu betreuen
     Spalte_2_Buddys = c(16)
-    
+
     #gibt die Spalte an, in der die E-Mail Adresse steht
     Spalte_Email_Incoming = c(3)
     Spalte_Email_Tuebingen = c(3)
-    
+
     #gibt die Spalte an, in der der Vorname steht
     Spalte_Vorname_Incoming = c(2)
     Spalte_Vorname_Tuebingen = c(2)
-    
+
     #gibt die Spalte an, in der der Nachname steht
     Spalte_Nachname_Incoming = c(1)
     Spalte_Nachname_Tuebingen = c(1)
-    
+
     # merkt sich in den Variablen, wie viele Reihen die Tabellen haben, d.h. wie viele Buddys sich angemeldet haben
     anzahl_incomings = nrow(tabelle_incoming)
     anzahl_tuebinger = nrow(tabelle_tuebingen)
-    
+
     #hier wird die Punkte-Matrix erstellt, in der die uebereinstimmungspunktzahl aller Buddy-Paare gespeichert werden wird
     #diese Schleifen iterieren ueber alle Paare von Tuebingern und Incomings
     punkte_matrix <-
@@ -206,17 +206,17 @@ matching_programm <-
         # der Wert wird dabei in der Funktion punkte_algorithmus berechnet, die sich weiter unten befindet
         punkte_algorithmus(tabelle_incoming[i, ], tabelle_tuebingen[j, ])
       }
-    
+
     matching = galeShapley.marriageMarket(t(punkte_matrix), punkte_matrix)
-    
+
     # Gibt es eine ungleiche Zahl an Tuebingern und Incomings, so sind im oberen Matching Personen aus der groeßeren Gruppe uebrig geblieben
     # Gab es mehr Tuebinger als Incomings, so bleiben diese Tuebinger ungematcht
     # Gab es mehr Incomings als Tuebinger, so werden diese erneut gematchet, und zwar mit Tuebingern, die angegeben haben, 2 Buddys betreuen zu wollen
-    
+
     #Variablen zum Merken der aus dem zweiten Matching genommenen Personen
     deleted_cols = c()
     deleted_rows = c()
-    
+
     if (anzahl_tuebinger < anzahl_incomings) {
       for (j in 1:anzahl_tuebinger) {
         if (toString(tabelle_tuebingen[j, Spalte_2_Buddys]) == "No") {
@@ -228,7 +228,7 @@ matching_programm <-
       if (length(deleted_cols) > 0)
         punkte_matrix <-
           punkte_matrix[, -deleted_cols] #alle Tuebinger, die nur 1 Buddy betreuen moechten, werden aus Matrix geloescht
-      
+
       for (i in 1:anzahl_incomings) {
         if (!(is.na(matching$proposals[i, 1]))) {
           #es wird ueberprueft, ob der Incoming schon gematcht wurde
@@ -236,29 +236,29 @@ matching_programm <-
             c(deleted_rows, i) #falls ja, so merken wir uns die Person
         }
       }
-      
+
       if (length(deleted_rows) > 0) {
         punkte_matrix <-
           punkte_matrix[-deleted_rows,]
       } #alle Incomings, die schon gematcht wurden, werden aus Matrix geloescht
-      
+
       index_matrix <-
         vektor_neue_indizes(deleted_cols, anzahl_tuebinger) #nun muessen die Indizes der aktualisierten Matrix angepasst werden (vgl. vektor_neue_indizes)
-      
+
       #auf den verbleibenden Buddys wird nun erneut ein Matching ausgefuehrt
       matching_2 = galeShapley.marriageMarket(t(punkte_matrix), punkte_matrix)
-      
+
       # in buddy_matching werden wir nun das komplette Matching festhalten
       buddy_matching = c()
       buddy_matching = matching$proposals
-      
+
       index = c(1)
-      
+
       for (k in 1:anzahl_incomings) {
         if (is.na(buddy_matching[k, 1])) {
           #falls der Incoming beim ersten Matching ungematched blieb
           # wird nun im zweiten Matching nachgesehen, zu wem er gematcht wurde (u.U. immer noch NA)
-          
+
           if (!(is.na(matching_2$proposals[index, 1]))) {
             buddy_matching[k, 1] <-
               reihe_index_umrechnung(matching_2$proposals[index, 1], index_matrix)
@@ -270,15 +270,15 @@ matching_programm <-
       buddy_matching = c()
       buddy_matching = matching$proposals
     }
-    
+
     # OUTPUT
     # NUN ERSTELLEN WIR EINE ueBERSICHTSTABELLE, IN DER DIE GEMATCHTEN PAARE NACHGESEHEN WERDEN
-    
+
     # AUSFueRHLICHE ueBERSICHT
-    
+
     #Anzahl von Spalten fuer Tabelle
     N <- ncol(tabelle_tuebingen) + ncol(tabelle_incoming)
-    
+
     # Wir erstellen nun eine uebersicht, die erst die Daten des Incomings und dann des Tuebinger Buddys enthaelt
     ausfuehrliche_uebersicht <-
       data.frame(list(tabelle_incoming[1,], tabelle_tuebingen[buddy_matching[1],]))
@@ -286,9 +286,9 @@ matching_programm <-
       ausfuehrliche_uebersicht[k, c(1:ncol(tabelle_incoming))] = tabelle_incoming[k,]
       ausfuehrliche_uebersicht[k, c((ncol(tabelle_incoming) + 1):N)] = tabelle_tuebingen[buddy_matching[k, 1],]
     }
-    
+
     # KURZueBERSICHT
-    
+
     # Wir erstellen nun eine uebersicht, die erst ausgewaehlte Daten des Incomings und dann des Tuebinger Buddys enthaelt
     # Welche Spalten enthalten sein sollen, wird in den nachfolgenden Vektoren festgelegt
     auswahl_incoming = c(
@@ -315,7 +315,7 @@ matching_programm <-
       Spalte_Hobby3_Tuebingen,
       Spalte_Datum_Tuebingen
     )
-    
+
     Kurzuebersicht <-
       data.frame(list(tabelle_incoming[1, auswahl_incoming], tabelle_tuebingen[buddy_matching[1], auswahl_tuebingen]))
     for (k in 2:nrow(buddy_matching)) {
@@ -323,7 +323,7 @@ matching_programm <-
       Kurzuebersicht[k, c((length(auswahl_incoming) + 1):(length(auswahl_incoming) +
                                                             length(auswahl_tuebingen)))] = tabelle_tuebingen[buddy_matching[k], auswahl_tuebingen]
     }
-    
+
     if (!(web_app)) {
       # diese Tabelle wird nun als .csv Datei exportiert
       write.csv2(Kurzuebersicht,
@@ -334,7 +334,7 @@ matching_programm <-
         file.path(dir_output, file_gesamtuebersicht),
         row.names = FALSE
       )
-      
+
       # diese Tabelle wird zusaetzlich als .xlsx Datei exportiert
       write.xlsx2(
         Kurzuebersicht,
@@ -367,67 +367,67 @@ matching_programm <-
 punkte_algorithmus <-
   function(incoming, tuebingen) {
     #header wird mit uebergeben
-    
+
     # Definition der Gewichtungsvariablen: wie viele Punkte gibt welche uebereinstimmung #Default
-    
+
     Studienfach_Gewichtung = c(10) #Punktzahl fuer dasselbe Studienfach #20
     Fachbereich_Gewichtung = c(8) #Punktzahl fuer denselben Fachbereich #15
     Fakultaet_Gewichtung = c(5) #Punktzahl fuer diesselbe Fakultaet #10
     BergTal_Gewichtung = c(1) #Punktzahl wenn beide am Berg oder im Tal studieren #5
-    
+
     Hobby_Gewichtung = c(5) #Punktzahl fuer das genau gleiche Hobby #5
     Hobbykategorie_Gewichtung = c(2) #Hobby aus selber Kategorie (z.Bsp. Sport (nicht:Other))
-    
+
     genaues_Alter_Gewichtung = c(8) # Punktzahl fuer genaue Altersuebereinstimmung #8
     ungefaehres_Alter_Gewichtung = c(5) #Punktzahl fuer bis zu 3 Jahre Altersunterschied #3
-    
+
     Geschlecht_Gewichtung = c(5) #Punktzahl fuer dasselbe Geschlecht
-    
+
     #beim Studienabschluss soll nur gewichtet werden, falls beide Doktoranden sind
     StudienabschlussPhD_Gewichtung = c(30) #Punktzahl falls beide Doktoranden sind
-    
+
     Austauschuni_Gewichtung = c(8) #Punktzahl wenn Tuebinger Auslandssemester an Uni des Incomings gemacht hat #8
     Austauschland_Gewichtung = c(12) #Punktzahl wenn Tuebinger Auslandssemester in Herkunftsland des Incomings gemacht hat #10
-    
+
     Land_Studiengang_Gewichtung = c(12) # Punktzahl wenn Incoming aus Land, das mit Studiengang des Tuebingers zu tun hat, bspw. Korea-Koreanistik
-    
+
     Sprache_Gewichtung = c(10) #Punktzahl fuer uebereinstimmende Sprache #5
-    
+
     Ankunftsdatum_0Wochen_Gewichtung = c(12) #Punktzahl falls der Tuebinger vor oder mit dem Incoming ankommt #20
     Ankunftsdatum_2Wochen_Gewichtung = c(6) #Punktzahl falls der Tuebinger bis zu 2 Wochen nach dem Incoming ankommt
     Ankunftsdatum_3Wochen_Gewichtung = c(3) #Punktzahl falls der Tuebinger bis zu 3 Wochen nach dem Incoming ankommt
-    
-    
+
+
     #Variable zum Speichern des Scores
     score = c(0)
-    
+
     #-----------------------------------------------------------------------
     # STUDIENFACH
     #-----------------------------------------------------------------------
-    
+
     studienfach_tue = tuebingen[Spalte_Studienfach_Tuebingen] #Variable in der Studienfach des Tuebingers gespeichert wird
     studienfach_in = incoming[Spalte_Studienfach_Incoming] #Variable in der Studienfach des Incomings gespeichert wird
     studienfach_tue_2 = tuebingen[Spalte_Studienfach2_Tuebingen] #Variable in der 2. Studienfach des Tuebingers gespeichert wird
     studienfach_in_2 = incoming[Spalte_Studienfach2_Incoming] #Variable in der 2. Studienfach des Incomings gespeichert wird
-    
+
     # 1. STUDIENFACH
-    
+
     #die studiengang_funktion gibt einen Vektor zurueck; Position 1 betitelt den Fachbereich des Studiengangs, Position 2 die Fakultaet
     studienfach_informationen_tue = studiengang_funktion(studienfach_tue)
     studienfach_fachbereich_tue = studienfach_informationen_tue[1]
     studienfach_fakultaet_tue = studienfach_informationen_tue[2]
-    
+
     studienfach_informationen_in = studiengang_funktion(studienfach_in)
     studienfach_fachbereich_in = studienfach_informationen_in[1]
     studienfach_fakultaet_in = studienfach_informationen_in[2]
-    
+
     if (is.na(studienfach_tue)) {
       studienfach_tue = "none"
     }
     if (is.na(studienfach_in)) {
       studienfach_in = "none"
     }
-    
+
     if (studienfach_tue == studienfach_in) {
       #falls die Teilnehmer dasselbe studieren
       score <-
@@ -444,9 +444,9 @@ punkte_algorithmus <-
       score <-
         score + BergTal_Gewichtung # vergib Punktzahl falls beide am Berg oder im Tal studieren
     }
-    
+
     land = incoming[Spalte_Land_Incoming]
-    
+
     if ((
       studienfach_tue == "Japanologie // Japanese Studies" |
       studienfach_tue == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
@@ -483,7 +483,7 @@ punkte_algorithmus <-
         (land == "United States of America")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((studienfach_tue == "Anglistik // English Studies") &
         (
           land == "United Kingdom" |
@@ -494,7 +494,7 @@ punkte_algorithmus <-
         )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((studienfach_tue == "Skandinavistik // Scandinavian Studies") &
         (
           land == "Denmark" |
@@ -504,7 +504,7 @@ punkte_algorithmus <-
         )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((
       studienfach_tue == "Slavistik // Slavic Studies" |
       studienfach_tue == "Russisch // Russian"
@@ -524,7 +524,7 @@ punkte_algorithmus <-
     )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((
       studienfach_tue == "Romanistik // Romance Language and Literature" |
       studienfach_tue == "Interkulturelle Deutsch-Französische Studien // Intercultural German-French Studies" |
@@ -535,7 +535,7 @@ punkte_algorithmus <-
      land == "Senegal")) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((
       studienfach_tue == "Romanistik // Romance Language and Literature" |
       studienfach_tue == "Italienisch // Italian Language" |
@@ -553,7 +553,7 @@ punkte_algorithmus <-
     )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     if ((studienfach_tue == "Lateinamerikastudien // Latin American Studies") &
         (
           land == "Argentina" |
@@ -563,16 +563,16 @@ punkte_algorithmus <-
         )) {
       score <- score + Land_Studiengang_Gewichtung
     }
-    
+
     # 2. STUDIENFACH
-    
+
     #wenn Incoming zweites Studienfach hat
     if (!(is.na(studienfach_in_2))) {
       #hole Fachbereich und Fakultaet fuer den zweiten Studiengang mittels studiengang_funktion
       studienfach_informationen_in2 = studiengang_funktion(studienfach_in_2)
       studienfach_fachbereich_in2 = studienfach_informationen_in2[1]
       studienfach_fakultaet_in2 = studienfach_informationen_in2[2]
-      
+
       if (studienfach_tue == studienfach_in_2) {
         #falls das zweite Studienfach mit dem Fach des Tuebingers uebereinstimmt
         score <-
@@ -592,16 +592,16 @@ punkte_algorithmus <-
         # falls der "Studienort" uebereinstimmt, und nicht schon Punkte vergeben wurden, weil der Studienort des ersten Fachs gleich ist wie der des Tuebingers
         score <- score + BergTal_Gewichtung
       }
-      
+
     }
-    
+
     #wenn Tuebinger zweites Studienfach hat
     if (!(is.na(studienfach_tue_2))) {
       #hole Fachbereich und Fakultaet fuer den zweiten Studiengang mittels studiengang_funktion
       studienfach_informationen_tue2 = studiengang_funktion(studienfach_tue_2)
       studienfach_fachbereich_tue2 = studienfach_informationen_tue2[1]
       studienfach_fakultaet_tue2 = studienfach_informationen_tue2[2]
-      
+
       if (studienfach_tue_2 == studienfach_in) {
         #falls das zweite Studienfach mit dem Fach des Incomings uebereinstimmt
         score <-
@@ -621,14 +621,14 @@ punkte_algorithmus <-
         # falls der "Studienort" uebereinstimmt, und nicht schon Punkte vergeben wurden, weil das Erstfach am selben Ort ist wie der des Incomings
         score <- score + BergTal_Gewichtung
       }
-      
+
       #wenn Incoming und Tuebinger zweites Studienfach haben
       if (!(is.na(studienfach_in_2))) {
         #hole Fachbereich und Fakultaet fuer den zweiten Studiengang mittels studiengang_funktion
         studienfach_informationen_in2 = studiengang_funktion(studienfach_in_2)
         studienfach_fachbereich_in2 = studienfach_informationen_in2[1]
         studienfach_fakultaet_in2 = studienfach_informationen_in2[2]
-        
+
         if (studienfach_tue_2 == studienfach_in_2) {
           #falls die beiden zweiten Studienfaecher uebereinstimmen
           score <-
@@ -649,8 +649,8 @@ punkte_algorithmus <-
             score + Fakultaet_Gewichtung #vergib Punkte fuer selbe Fakultaet
         }
       }
-      
-      
+
+
       if ((
         studienfach_tue_2 == "Japanologie // Japanese Studies" |
         studienfach_tue_2 == "Politik und Gesellschaft Ostasiens (MA) // East Asian History and Politics"
@@ -687,7 +687,7 @@ punkte_algorithmus <-
           (land == "United States of America")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((
         studienfach_tue_2 == "Anglistik // English Studies" |
         studienfach_tue_2 == "Englisch // English language" |
@@ -702,7 +702,7 @@ punkte_algorithmus <-
       )) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((studienfach_tue_2 == "Skandinavistik // Scandinavian Studies") &
           (
             land == "Denmark" |
@@ -712,7 +712,7 @@ punkte_algorithmus <-
           )) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((
         studienfach_tue_2 == "Slavistik // Slavic Studies" |
         studienfach_tue_2 == "Russisch // Russian"
@@ -732,7 +732,7 @@ punkte_algorithmus <-
       )) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((
         studienfach_tue_2 == "Romanistik // Romance Language and Literature" |
         studienfach_tue_2 == "Französisch // French Language" |
@@ -743,7 +743,7 @@ punkte_algorithmus <-
        land == "Senegal")) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((
         studienfach_tue_2 == "Romanistik // Romance Language and Literature" |
         studienfach_tue_2 == "Italienisch // Italian Language" |
@@ -761,7 +761,7 @@ punkte_algorithmus <-
       )) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
       if ((studienfach_tue_2 == "Lateinamerikastudien // Latin American Studies") &
           (
             land == "Argentina" |
@@ -771,13 +771,13 @@ punkte_algorithmus <-
           )) {
         score <- score + Land_Studiengang_Gewichtung
       }
-      
+
     }
-    
+
     #------------------------------------------------------------------------------
     # HOBBYS
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[Spalte_Hobby1_Tuebingen])) {
       tuebingen[Spalte_Hobby1_Tuebingen] = "none"
     }
@@ -796,12 +796,12 @@ punkte_algorithmus <-
     if (is.na(incoming[Spalte_Hobby3_Incoming])) {
       incoming[Spalte_Hobby3_Incoming] = "none"
     }
-    
+
     # Vektor fuer alle Hobbies des Tuebingers
     hobbies_tue = c(unname(tuebingen[Spalte_Hobby1_Tuebingen]), unname(tuebingen[Spalte_Hobby2_Tuebingen]), unname(tuebingen[Spalte_Hobby3_Tuebingen]))
     # Vektor fuer alle Hobbies des Incomings
     hobbies_in = c(unname(incoming[Spalte_Hobby1_Incoming]), unname(incoming[Spalte_Hobby2_Incoming]), unname(incoming[Spalte_Hobby3_Incoming]))
-    
+
     for (h in 1:3) {
       #gehe alle Hobbies des Incomings durch
       if (hobbies_in[[h]] == hobbies_tue[[1]] |
@@ -817,18 +817,18 @@ punkte_algorithmus <-
             score + Hobbykategorie_Gewichtung #falls ja, vergib Punktzahl fuer selbe Hobbykategorie
         }
     }
-    
+
     #------------------------------------------------------------------------------
     # ALTER
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[Spalte_Alter_Tuebingen])) {
       tuebingen[Spalte_Alter_Tuebingen] = 0
     }
     if (is.na(incoming[Spalte_Alter_Incoming])) {
       incoming[Spalte_Alter_Incoming] = 100
     }
-    
+
     alter_unterschied = abs(tuebingen[Spalte_Alter_Tuebingen] - incoming[Spalte_Alter_Incoming]) #berechne Altersunterschied
     if (alter_unterschied == 0) {
       #falls kein Altersunterschied, vergib Punkte fuer selbes Alter
@@ -841,33 +841,33 @@ punkte_algorithmus <-
       score <-
         score - ungefaehres_Alter_Gewichtung - genaues_Alter_Gewichtung
     }
-    
-    
+
+
     #------------------------------------------------------------------------------
     # GESCHLECHT
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[Spalte_Geschlecht_Tuebingen])) {
       tuebingen[Spalte_Geschlecht_Tuebingen] = "none"
     }
     if (is.na(incoming[Spalte_Geschlecht_Incoming])) {
       incoming[Spalte_Geschlecht_Incoming] = "none"
     }
-    
+
     if (tuebingen[Spalte_Geschlecht_Tuebingen] == incoming[Spalte_Geschlecht_Incoming]) {
       score <-
         score + Geschlecht_Gewichtung #falls selbes Geschlecht, vergib Punkte
     }
-    
+
     #------------------------------------------------------------------------------
     # UNI + LAND
     #------------------------------------------------------------------------------
-    
+
     if (is.na(incoming[Spalte_Land_Incoming])) {
       incoming[Spalte_Land_Incoming] = "none"
     }
-    
-    
+
+
     #falls Uni im Freitext steht wird sie auf anderes Feld uebertragen
     if (!(is.na(tuebingen[Spalte_Uni_Tuebingen_Freitext]))) {
       tuebingen[Spalte_Uni_Tuebingen] <-
@@ -877,7 +877,7 @@ punkte_algorithmus <-
       incoming[Spalte_Uni_Incoming] <-
         incoming[Spalte_Uni_Incoming_Freitext]
     }
-    
+
     if (!(is.na(tuebingen[Spalte_Uni_Tuebingen]))) {
       #falls der Tuebinger ein Auslandssemester gemacht hat
       if (tuebingen[Spalte_Uni_Tuebingen] == incoming[Spalte_Uni_Incoming]) {
@@ -889,19 +889,19 @@ punkte_algorithmus <-
             score + Austauschland_Gewichtung #andernfalls vergib Punkte falls Tuebinger im Herkunftsland des Incomings war
         }
     }
-    
-    
+
+
     #------------------------------------------------------------------------------
     # SPRACHE
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[[Spalte_Sprachen_Tuebingen]])) {
       tuebingen[[Spalte_Sprachen_Tuebingen]] = "none"
     }
     if (is.na(incoming[[Spalte_Sprache_Incoming]])) {
       incoming[[Spalte_Sprache_Incoming]] = "none"
     }
-    
+
     # Sprachen werden aus Tabelle in Vektor uebertragen
     sprachen_tuebingen <-
       strsplit(toString(tuebingen[[Spalte_Sprachen_Tuebingen]]), ",")
@@ -910,7 +910,7 @@ punkte_algorithmus <-
     #Anzahl der gesprochenen Sprachen werden gezaehlt
     anzahl_sprachen_tuebingen <- length(sprachen_tuebingen[[1]])
     anzahl_sprachen_incoming <- length(sprachen_incoming[[1]])
-    
+
     for (s in 1:anzahl_sprachen_incoming) {
       # hier gibt es fuer alle identische Sprachen außer Englisch und Deutsch Punkte
       if (sprachen_incoming[[1]][s] != "German" &
@@ -921,18 +921,18 @@ punkte_algorithmus <-
         }
       }
     }
-    
+
     #------------------------------------------------------------------------------
     # ANKUNFT
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[[Spalte_Datum_Tuebingen]])) {
       tuebingen[[Spalte_Datum_Tuebingen]] = "01.01.2001"
     }
     if (is.na(incoming[[Spalte_Datum_Incoming]])) {
       incoming[[Spalte_Datum_Incoming]] = "01.01.2001"
     }
-    
+
     # Je groeßer die Zahl, umso mehr Tage ist der Buddy alleine in Tuebingen
     ankunftsdatum_unterschied = as.Date(strptime(toString(unname(tuebingen[[Spalte_Datum_Tuebingen]])), "%d.%m.%y")) - as.Date(strptime(toString(unname(incoming[[Spalte_Datum_Incoming]])), "%d.%m.%y"))
     if (ankunftsdatum_unterschied <= 0) {
@@ -947,24 +947,24 @@ punkte_algorithmus <-
           #falls der Buddy zwischen 2 und 3 Wochen alleine ist
           score <- score + Ankunftsdatum_3Wochen_Gewichtung
         }
-    
+
     #------------------------------------------------------------------------------
     # Studienabschluss
     #------------------------------------------------------------------------------
-    
+
     if (is.na(tuebingen[Spalte_Studienabschluss_Tuebingen])) {
       tuebingen[Spalte_Studienabschluss_Tuebingen] = "none"
     }
     if (is.na(incoming[Spalte_Studienabschluss_Incoming])) {
       incoming[Spalte_Studienabschluss_Incoming] = "none"
     }
-    
+
     if (tuebingen[Spalte_Studienabschluss_Tuebingen] == "Doktorand/in // PhD Student" &
         incoming[Spalte_Studienabschluss_Incoming] == "Doktorand/in // PhD Student") {
       score <-
         score + StudienabschlussPhD_Gewichtung #falls beide PhD, so werden Punkte vergeben
     }
-    
+
     return (score)
   }
 
@@ -989,36 +989,36 @@ studiengang_funktion <- function(studiengang) {
     F7 = "Mathematisch-Naturwissenschaftliche Fakultaet"
     F8 = "Zentrum fuer Islamische Theologie"
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 1: EVANGELISCH-THEOLOGISCHE FAKULTaeT
   #------------------------------------------------------------------
-  
+
   if (studiengang == "Evangelische Theologie // Protestant Theology" |
       studiengang == "Judaistik // Jewish Studies") {
     return(c("Ev. Theologie", F1))
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 2: KATHOLISCH-THEOLOGISCHE FAKULTaeT
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Katholische Theologie // Catholic Theology") {
     return(c("Kath. Theologie", F2))
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 3: JURISTISCHE FAKULTaeT
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Rechtswissenschaft // Law") {
     return(c("Jura", F3))
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 4: MEDIZIN
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Biomedical Technologies" |
            studiengang == "Medizin // Medicine" |
            studiengang == "Medizin - Biotechnologie // Medicine - Biotechnology" |
@@ -1031,11 +1031,11 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Pflege // Nursery") {
     return(c("Medizin", F4))
   }
-  
+
   #------------------------------------------------------------------
   #FAKULTaeT 5: PHILOSOPHISCHE FAKULTaeT
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Ägyptologie // Egyptology" |
            studiengang == "Archäologie des Mittelalters // Archaeology of the Middle Ages" |
            studiengang == "Vorderasiatische Archäologie // Near Eastern Archaeology" |
@@ -1053,7 +1053,7 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Latein // Latin") {
     return(c("Altertums- und Kunstwissenschaften", F5))
   }
-  
+
   else if (studiengang == "Ethnologie // Social and Cultural Anthropology" |
            studiengang == "Indologie und South Asian Studies // Indology and South Asian Studies" |
            studiengang == "Japanologie // Japanese Studies" |
@@ -1065,13 +1065,13 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Sprachen, Geschichte und Kulturen des Nahen Ostens // Languages, History and Cultures of the Near East") {
     return(c("Asien-Orient-Wissenschaften", F5))
   }
-  
+
   else if (studiengang == "Allgemeine Rhetorik // Rhetorics" |
            studiengang == "Medienwissenschaft // Media Science" |
            studiengang == "Philosophie // Philosophy") {
     return(c("Philosophie - Rhetorik - Medien", F5))
   }
-  
+
   else if (studiengang == "American Studies" |
            studiengang == "Anglistik // English Studies" |
            studiengang == "Germanistik // German Studies" |
@@ -1092,20 +1092,20 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Literaturwissenschaften // Literature") {
     return(c("Neuphilologie", F5))
   }
-  
+
   else if (studiengang == "Geschichte // History") {
     return(c("Geschichtswissenschaften", F5))
   }
-  
+
   else if (studiengang == "Computerlinguistik // Computational Linguistics" |
            studiengang == "Sprachwissenschaften // Linguistics") {
     return(c("Sprachwissenschaft", F5))
   }
-  
+
   #------------------------------------------------------------------
   #FAKULTaeT 6: WIRTSCHAFTS- UND SOZIALWISSENSCHAFTLICHE FAKULTaeT
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Empirische Bildungsforschung und Pädagogische Psychologie // Empirical Educational Research " |
            studiengang == "Empirische Kulturwissenschaft // Empirical Cultural Studies" |
            studiengang == "Erwachsenenbildung // Adult Education" |
@@ -1124,7 +1124,7 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Schulmanagement und Leadership // School Management and Leadership") {
     return(c("Sozialwissenschaften", F7))
   }
-  
+
   else if (studiengang == "Accounting and Finance (M.Sc.)" |
            studiengang == "Business Administration" |
            studiengang == "Economics" |
@@ -1141,18 +1141,18 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Data Science in Business and Economics") {
     return(c("Wirtschaftswisschenschaften", F6))
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 7: MATHEMATISCH-NATURWISSENSCHAFTLICHE FAKULTaeT
   #------------------------------------------------------------------
-  
-  
+
+
   else if (studiengang == "Biochemie // Biochemistry" |
            studiengang == "Pharmaceutical Sciences and Technologies" |
            studiengang == "Pharmazie // Pharmacy") {
     return(c("Pharmazie und Biochemie", F7))
   }
-  
+
   else if (studiengang == "Bioinformatik // Bioinformatics" |
            studiengang == "Informatik // Computer Science" |
            studiengang == "Kognitionswissenschaft // Cognition Science" |
@@ -1161,7 +1161,7 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Medizininformatik // Medical Informatics") {
     return(c("Informatik", F7))
   }
-  
+
   else if (studiengang == "Biologie // Biology" |
            studiengang == "Nano-Science" |
            studiengang == "Evolution und Ökologie // Evolution and Ecology" |
@@ -1170,11 +1170,11 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Molekulare Zellbiologie und Immunologie // Molecular Cell Biology and Immunology") {
     return(c("Biologie", F7))
   }
-  
+
   else if (studiengang == "Chemie // Chemistry") {
     return(c("Chemie", F7))
   }
-  
+
   else if (studiengang == "Geographie // Geography" |
            studiengang == "Geologie // Geology" |
            studiengang == "Geoökologie // Geoecology" |
@@ -1185,11 +1185,11 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Archaeological Sciences and Human Evolution") {
     return(c("Geowissenschaften", F7))
   }
-  
+
   else if (studiengang == "Mathematik // Mathematics") {
     return(c("Mathematik", F7))
   }
-  
+
   else if (studiengang == "Physik // Physics" |
            studiengang == "Mathematical Physics" |
            studiengang == "Naturwissenschaft und Technik // Natural Sciences and Technology" |
@@ -1198,24 +1198,24 @@ studiengang_funktion <- function(studiengang) {
            studiengang == "Advanced Quantum Physics") {
     return(c("Physik", F7))
   }
-  
+
   else if (studiengang == "Psychologie // Psychology" |
            studiengang == "Schulpsychologie // School Psychology") {
     return(c("Psychologie", F7))
   }
-  
+
   #------------------------------------------------------------------
   # FAKULTaeT 8: ZENTRUM FueR ISLAMISCHE THEOLOGIE
   #------------------------------------------------------------------
-  
+
   else if (studiengang == "Islamische Theologie // Islamic Theology") {
     return(c("Isl. Theologie", F8))
   }
-  
+
   else{
     return(c("Fehler", "Fehler"))
   }
-  
+
 }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
@@ -1247,7 +1247,7 @@ berg_tal <- function(fakultaet1, fakultaet2) {
     #andernfalls muessen beide im Tal studieren
     return(TRUE)
   }
-  
+
 }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
@@ -1285,7 +1285,7 @@ hobbykategorie_funktion <-
       }
     }
     return(FALSE)
-    
+
   }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
@@ -1330,9 +1330,9 @@ vektor_neue_indizes <- function(deleted_cols, anzahl_tuebinger) {
       index_matrix[i, 1] <- j
       j <- j + 1
     }
-    
+
   }
-  
+
   return(index_matrix) #gib Indize-Matrix zurueck
 }
 

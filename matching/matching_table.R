@@ -8,10 +8,10 @@
 matching_table <- function(table_results) {
   tryCatch({
     setDT(table_results)
-    
+
     setorder(table_results,
              na.last = FALSE)
-    
+
     table_results <-
       datatable(
         table_results,

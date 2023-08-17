@@ -20,20 +20,20 @@ email_versand <- function(input_tabelle)
     read.csv(file = input_incoming,
              header = T,
              na.strings = c("", "NA"))
-  
-  
+
+
   #gibt die Spalte an, in der die E-Mail Adresse steht
   Spalte_EMail_Incoming = c(4)
   Spalte_Email_Tuebingen = c(26)
-  
+
   #gibt die Spalte an, in der der Vorname steht
   Spalte_Vorname_Incoming = c(3)
   Spalte_Vorname_Tuebingen = c(25)
-  
+
   #gibt die Spalte an, in der der Nachname steht
   Spalte_Nachname_Incoming = c(2)
   Spalte_Nachname_Tuebingen = c(24)
-  
+
   #gibt an, in welcher Spalte die jeweiligen Informationen stehen
   Spalte_Alter_Incoming = c(6)
   Spalte_Geschlecht_Incoming = c(7)
@@ -50,9 +50,9 @@ email_versand <- function(input_tabelle)
   Spalte_Sprachen_Incoming = c(18)
   Spalte_Kurs_Incoming = c(19)
   Spalte_Datum_Incoming = c(20)
-  
-  
-  
+
+
+
   Spalte_Alter_Tuebingen = c(28)
   Spalte_Geschlecht_Tuebingen = c(29)
   Spalte_Studienfach_Tuebingen = c(30)
@@ -66,10 +66,10 @@ email_versand <- function(input_tabelle)
   Spalte_Hobby3_Tuebingen = c(38)
   Spalte_Sprache_Tuebingen = c(39)
   Spalte_Datum_Tuebingen = c(41)
-  
-  
+
+
   sender <- "exchange.buddy@uni-tuebingen.de"
-  
+
   for (i in 1:nrow(tabelle)) {
     recipients <-
       c(toString(tabelle[i, Spalte_EMail_Incoming]), toString(tabelle[i, Spalte_EMail_Tuebingen]))
@@ -116,7 +116,7 @@ email_versand <- function(input_tabelle)
         "Preffered communication language: ",
         toString(tabelle[i, Spalte_comlang_Incoming]),
         sep = "\n",
-        
+
         underline("Tuebinger Buddy:"),
         sep = "\n",
         "First Name: ",
